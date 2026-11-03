@@ -1,0 +1,723 @@
+{% style %}
+  .custom-contact-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_main }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .custom-contact-section-{{ section.id }} .contact-header .sub-title {
+    color: {{ section.settings.color_subtitle }};
+  }
+
+  .custom-contact-section-{{ section.id }} .contact-header .main-title {
+    color: {{ section.settings.color_heading }};
+  }
+
+  .custom-contact-section-{{ section.id }} .contact-header .main-title span {
+    color: {{ section.settings.color_accent }};
+  }
+
+  .custom-contact-section-{{ section.id }} .info-block {
+    border-bottom: 1px solid {{ section.settings.color_border }};
+  }
+
+  .custom-contact-section-{{ section.id }} .info-block svg,
+  .custom-contact-section-{{ section.id }} .map-block svg {
+    stroke: {{ section.settings.color_accent }};
+  }
+
+  .custom-contact-section-{{ section.id }} .info-label {
+    color: {{ section.settings.color_subtitle }};
+  }
+
+  .custom-contact-section-{{ section.id }} .info-text {
+    color: {{ section.settings.color_heading }};
+  }
+
+  .custom-contact-section-{{ section.id }} .contact-form-wrapper {
+    background-color: {{ section.settings.bg_form }};
+  }
+
+  .custom-contact-section-{{ section.id }} .form-group input,
+  .custom-contact-section-{{ section.id }} .form-group select,
+  .custom-contact-section-{{ section.id }} .form-group textarea {
+    border-bottom: 1px solid {{ section.settings.color_border }};
+    color: {{ section.settings.color_heading }};
+  }
+
+  .custom-contact-section-{{ section.id }} .form-group input::placeholder,
+  .custom-contact-section-{{ section.id }} .form-group textarea::placeholder {
+    color: {{ section.settings.color_placeholder }} !important;
+    opacity: 1;
+  }
+
+  .custom-contact-section-{{ section.id }} .form-group select {
+    color: {{ section.settings.color_placeholder }} !important;
+  }
+
+  .custom-contact-section-{{ section.id }} .form-group input:focus,
+  .custom-contact-section-{{ section.id }} .form-group select:focus,
+  .custom-contact-section-{{ section.id }} .form-group textarea:focus {
+    border-bottom-color: {{ section.settings.color_accent }};
+  }
+
+  .custom-contact-section-{{ section.id }} .submit-btn {
+    background-color: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text }};
+  }
+
+  .custom-contact-section-{{ section.id }} .submit-btn:hover {
+    background-color: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+  }
+
+  /* Structural Styles */
+  .custom-contact-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .contact-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .contact-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .contact-header .sub-title {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .contact-header .main-title {
+    font-size: 42px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .contact-header .main-title span {
+    font-style: italic;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-block {
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+  }
+
+  .info-block:last-child {
+    border-bottom: none;
+  }
+
+  .info-block svg,
+  .map-block svg {
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .custom-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .map-block {
+    margin-top: 10px;
+  }
+
+  .map-address-text {
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+
+  .map-address-text.below {
+    margin-top: 12px;
+    margin-bottom: 0;
+  }
+
+  .map-container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .map-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0;
+  }
+
+  .info-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-text {
+    font-size: 16px;
+    margin: 0;
+    text-decoration: none;
+    display: block;
+  }
+
+  .contact-form-wrapper {
+    padding: 40px;
+    border-radius: 4px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 0;
+    font-size: 14px;
+    outline: none;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  .form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%202C2623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    cursor: pointer;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    border: none;
+    padding: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .form-status {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .form-status.success { color: #2e7d32; }
+  .form-status.error { color: #d32f2f; }
+
+  @media screen and (max-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .contact-header .main-title {
+      font-size: 32px;
+    }
+
+    .contact-form-wrapper {
+      padding: 25px 20px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-contact-section custom-contact-section-{{ section.id }}">
+  <div class="contact-container">
+    
+    <!-- Header -->
+    {% if section.settings.subtitle != blank or section.settings.heading_main != blank %}
+      <div class="contact-header">
+        {% if section.settings.subtitle != blank %}
+          <span class="sub-title">{{ section.settings.subtitle }}</span>
+        {% endif %}
+        {% if section.settings.heading_main != blank %}
+          <h2 class="main-title">
+            {{ section.settings.heading_main }} 
+            {% if section.settings.heading_highlight != blank %}
+              <span>{{ section.settings.heading_highlight }}</span>
+            {% endif %}
+          </h2>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="contact-grid">
+      
+      <!-- Left Column: Contact Info & Map Blocks -->
+      <div class="contact-info">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'info_block' %}
+              <div class="info-block" {{ block.shopify_attributes }}>
+                {% if block.settings.custom_icon != blank %}
+                  <img 
+                    src="{{ block.settings.custom_icon | image_url: width: 100 }}" 
+                    alt="{{ block.settings.label | escape }}" 
+                    class="custom-icon-img"
+                    loading="lazy"
+                  >
+                {% else %}
+                  {% if block.settings.icon == 'mail' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  {% elsif block.settings.icon == 'phone' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  {% elsif block.settings.icon == 'map' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  {% endif %}
+                {% endif %}
+
+                {% if block.settings.label != blank %}
+                  <span class="info-label">{{ block.settings.label }}</span>
+                {% endif %}
+
+                {% if block.settings.value != blank %}
+                  {% if block.settings.link != blank %}
+                    <a href="{{ block.settings.link }}" class="info-text">{{ block.settings.value }}</a>
+                  {% else %}
+                    <span class="info-text">{{ block.settings.value }}</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+
+            {% when 'map_block' %}
+              <div class="map-block" {{ block.shopify_attributes }}>
+                {% if block.settings.show_icon %}
+                  {% if block.settings.custom_icon != blank %}
+                    <img 
+                      src="{{ block.settings.custom_icon | image_url: width: 100 }}" 
+                      alt="{{ block.settings.map_title | escape }}" 
+                      class="custom-icon-img"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    {% if block.settings.icon == 'mail' %}
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    {% elsif block.settings.icon == 'phone' %}
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    {% elsif block.settings.icon == 'map' %}
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+
+                {% if block.settings.map_title != blank %}
+                  <span class="info-label">{{ block.settings.map_title }}</span>
+                {% endif %}
+                
+                {% if block.settings.map_address != blank and block.settings.address_position == 'above' %}
+                  <p class="info-text map-address-text">{{ block.settings.map_address }}</p>
+                {% endif %}
+
+                {% if block.settings.iframe_code != blank %}
+                  <div class="map-container" style="height: {{ block.settings.map_height }}px;">
+                    {{ block.settings.iframe_code }}
+                  </div>
+                {% endif %}
+
+                {% if block.settings.map_address != blank and block.settings.address_position == 'below' %}
+                  <p class="info-text map-address-text below">{{ block.settings.map_address }}</p>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+
+      <!-- Right Column: Form -->
+      <div class="contact-form-wrapper">
+        {% form 'contact', class: 'custom-contact-form' %}
+          {% if form.posted_successfully? %}
+            <p class="form-status success">{{ section.settings.success_msg }}</p>
+          {% elsif form.errors %}
+            <p class="form-status error">Please fill out all required fields correctly.</p>
+          {% endif %}
+
+          <div class="form-row">
+            <div class="form-group">
+              <input type="text" id="ContactFormName-{{ section.id }}" name="contact[Name]" placeholder="{{ section.settings.placeholder_name }}" required>
+            </div>
+            <div class="form-group">
+              <input type="email" id="ContactFormEmail-{{ section.id }}" name="contact[email]" placeholder="{{ section.settings.placeholder_email }}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <select id="ContactFormReason-{{ section.id }}" name="contact[Reason for contact]">
+              <option value="" disabled selected hidden>{{ section.settings.placeholder_reason }}</option>
+              {% assign reasons = section.settings.reason_options | split: ',' %}
+              {% for reason in reasons %}
+                <option value="{{ reason | strip }}">{{ reason | strip }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <textarea id="ContactFormMessage-{{ section.id }}" name="contact[body]" rows="5" placeholder="{{ section.settings.placeholder_message }}" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">{{ section.settings.btn_text_label }}</button>
+        {% endform %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Contact Form",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sub-heading Label",
+      "default": "CONTACT"
+    },
+    {
+      "type": "text",
+      "id": "heading_main",
+      "label": "Main Heading Text",
+      "default": "We'd love to"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Highlighted Text (Italic)",
+      "default": "hear from you."
+    },
+    {
+      "type": "header",
+      "content": "Form Labels & Placeholders"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_name",
+      "label": "Name Field Placeholder",
+      "default": "Name"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email Field Placeholder",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_reason",
+      "label": "Select Dropdown Placeholder",
+      "default": "Reason for contact"
+    },
+    {
+      "type": "textarea",
+      "id": "reason_options",
+      "label": "Dropdown Options (Comma Separated)",
+      "default": "Customer Support, Order Inquiry, Press & PR, Wholesale, Other"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Message Field Placeholder",
+      "default": "Message"
+    },
+    {
+      "type": "text",
+      "id": "btn_text_label",
+      "label": "Submit Button Label",
+      "default": "SEND MESSAGE"
+    },
+    {
+      "type": "text",
+      "id": "success_msg",
+      "label": "Success Message",
+      "default": "Thank you for contacting us. We'll get back to you shortly!"
+    },
+    {
+      "type": "header",
+      "content": "Section Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_main",
+      "label": "Main Section Background",
+      "default": "#FAF8F5"
+    },
+    {
+      "type": "color",
+      "id": "bg_form",
+      "label": "Form Box Background",
+      "default": "#F1ECE6"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "label": "Primary Accent Color",
+      "default": "#C29A78"
+    },
+    {
+      "type": "color",
+      "id": "color_heading",
+      "label": "Heading & Text Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "color_subtitle",
+      "label": "Subtitles & Labels Color",
+      "default": "#9E8C7C"
+    },
+    {
+      "type": "color",
+      "id": "color_placeholder",
+      "label": "Placeholder Text Color",
+      "default": "#9E8C7C"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "Input & Info Border Line Color",
+      "default": "#EBE5DF"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button Background",
+      "default": "#0A0A0A"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Button Hover Background",
+      "default": "#C29A78"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Button Hover Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_block",
+      "name": "Contact Info Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Preset Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "mail", "label": "Email Icon" },
+            { "value": "phone", "label": "Phone Icon" },
+            { "value": "map", "label": "Map Pin Icon" }
+          ],
+          "default": "mail"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom Icon Image (Overrides Preset)",
+          "info": "Upload PNG, SVG, JPG, etc."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label Text",
+          "default": "CUSTOMER CARE"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value Text",
+          "default": "hello@thekrusheffect.com"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "map_block",
+      "name": "Google Map",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show Icon",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Preset Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "mail", "label": "Email Icon" },
+            { "value": "phone", "label": "Phone Icon" },
+            { "value": "map", "label": "Map Pin Icon" }
+          ],
+          "default": "map"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom Icon Image (Overrides Preset)",
+          "info": "Upload PNG, SVG, JPG, etc."
+        },
+        {
+          "type": "text",
+          "id": "map_title",
+          "label": "Map Title/Label",
+          "default": "OUR LOCATION"
+        },
+        {
+          "type": "textarea",
+          "id": "map_address",
+          "label": "Address Details (Optional)",
+          "default": "123 Business Street, Suite 100, New York, NY 10001"
+        },
+        {
+          "type": "select",
+          "id": "address_position",
+          "label": "Address Position",
+          "options": [
+            { "value": "above", "label": "Above Map" },
+            { "value": "below", "label": "Below Map" }
+          ],
+          "default": "above"
+        },
+        {
+          "type": "html",
+          "id": "iframe_code",
+          "label": "Google Maps Embed Code (iframe)",
+          "info": "Paste the complete Google Maps <iframe> code here."
+        },
+        {
+          "type": "range",
+          "id": "map_height",
+          "min": 150,
+          "max": 500,
+          "step": 10,
+          "unit": "px",
+          "label": "Map Height",
+          "default": 250
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Contact Form",
+      "blocks": [
+        {
+          "type": "info_block",
+          "settings": {
+            "icon": "mail",
+            "label": "CUSTOMER CARE",
+            "value": "hello@thekrusheffect.com",
+            "link": "mailto:hello@thekrusheffect.com"
+          }
+        },
+        {
+          "type": "info_block",
+          "settings": {
+            "icon": "phone",
+            "label": "STUDIO",
+            "value": "+1 (555) 023-2026",
+            "link": "tel:+15550232026"
+          }
+        },
+        {
+          "type": "info_block",
+          "settings": {
+            "icon": "map",
+            "label": "HOUSE",
+            "value": "New York · Atlanta · Los Angeles"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

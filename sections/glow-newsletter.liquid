@@ -1,0 +1,341 @@
+{%- style -%}
+  .custom-newsletter-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mb }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mb }}px;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .newsletter-card-{{ section.id }} {
+    width: 100%;
+    max-width: {{ section.settings.section_width }}px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #0b0c0d;
+    background-image: radial-gradient(
+      circle at center, 
+      {{ section.settings.glow_color | color_modify: 'alpha', section.settings.glow_opacity }} 0%, 
+      rgba(11, 12, 13, 1) {{ section.settings.glow_size }}%
+    );
+
+    border: 1px solid oklch(28% .012 260);
+    border-radius: 12px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .newsletter-card-{{ section.id }} h2 {
+    color: {{ section.settings.text_color }};
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .newsletter-card-{{ section.id }} p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 540px;
+    margin: 0 auto 24px auto;
+  }
+
+  .newsletter-form-wrapper-{{ section.id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form-{{ section.id }} {
+    width: 100%;
+  }
+
+  .newsletter-field-{{ section.id }} {
+    flex-grow: 1;
+    position: relative;
+    width: 100%;
+  }
+
+  .newsletter-input-{{ section.id }} {
+    width: 100%;
+    background-color: #121314;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+
+  .newsletter-input-{{ section.id }}:focus {
+    border-color: {{ section.settings.button_color }};
+  }
+
+  .newsletter-btn-{{ section.id }} {
+    background-color: {{ section.settings.button_color }};
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+  }
+
+  .newsletter-btn-{{ section.id }}:hover {
+    opacity: 0.9;
+  }
+
+  .newsletter-success-{{ section.id }} {
+    color: #28a745;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  @media screen and (min-width: 750px) {
+    .custom-newsletter-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+    .newsletter-card-{{ section.id }} {
+      padding: 60px 40px;
+    }
+    .newsletter-card-{{ section.id }} h2 {
+      font-size: 36px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .newsletter-form-wrapper-{{ section.id }} {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .newsletter-field-{{ section.id }},
+    .newsletter-btn-{{ section.id }} {
+      width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<div class="custom-newsletter-{{ section.id }}">
+  <div class="newsletter-card-{{ section.id }}">
+    
+    {%- if section.settings.heading != blank -%}
+      <h2>{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p>{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    {%- assign form_class = 'newsletter-form-' | append: section.id -%}
+    {%- form 'customer', class: form_class -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      
+      <div class="newsletter-form-wrapper-{{ section.id }}">
+        <div class="newsletter-field-{{ section.id }}">
+          <input
+            id="NewsletterForm--{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            class="newsletter-input-{{ section.id }}"
+            value="{{ form.email }}"
+            aria-required="true"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            {% if form.errors %}
+              autofocus
+              aria-invalid="true"
+              aria-describedby="Newsletter-error-{{ section.id }}"
+            {% elsif form.posted_successfully? %}
+              aria-describedby="Newsletter-success-{{ section.id }}"
+            {% endif %}
+            placeholder="{{ section.settings.placeholder_text }}"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="newsletter-btn-{{ section.id }}" name="commit" id="Subscribe-{{ section.id }}">
+          {{ section.settings.button_text }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      {%- if form.errors -%}
+        <small class="newsletter-error-{{ section.id }}" id="Newsletter-error-{{ section.id }}" style="color: #ff4d4d; display: block; margin-top: 10px;">
+          {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+        </small>
+      {%- endif -%}
+
+      {%- if form.posted_successfully? -%}
+        <div class="newsletter-success-{{ section.id }}" id="Newsletter-success-{{ section.id }}" tabindex="-1" autofocus>
+          {{ section.settings.success_message }}
+        </div>
+      {%- endif -%}
+    {%- endform -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Glow Newsletter",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "section_width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Section Max Width",
+      "default": 1100
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Join the paddock"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Get new drops, exclusive offers and build guides — straight to your inbox. No spam, ever."
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Placeholder Text",
+      "default": "you@email.com"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Thanks for subscribing!"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Glow Controls"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#00A0DE"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Glow Base Color",
+      "default": "#00A0DE"
+    },
+    {
+      "type": "range",
+      "id": "glow_opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Glow Opacity (Brightness)",
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "id": "glow_size",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Glow Radius Size",
+      "default": 75
+    },
+    {
+      "type": "header",
+      "content": "Desktop Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Mobile Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mb",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mb",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom (Mobile)",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Glow Newsletter"
+    }
+  ]
+}
+{% endschema %}

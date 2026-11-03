@@ -1,0 +1,179 @@
+{%- assign s = section.settings -%}{%- assign sid = section.id -%}
+{%- if s.image != blank -%}{%- assign main_img = s.image -%}{%- else -%}{%- assign main_img = s.mobile_image -%}{%- endif -%}
+{%- assign img_loading = 'lazy' -%}{%- assign img_priority = 'auto' -%}
+{%- if section.index == 1 -%}{%- assign img_loading = 'eager' -%}{%- assign img_priority = 'high' -%}{%- endif -%}
+{%- assign alt_text = s.image_alt | default: main_img.alt -%}
+{% render 'signature-hero-css', section: section %}
+<div id='sig-hero-{{ sid }}' class='sig-hero sig-hero--d-{{ s.desktop_height_mode }} sig-hero--m-{{ s.mobile_height_mode }}'>
+<div class='sig-hero__media'>
+{%- if main_img != blank -%}
+<picture>
+{%- if s.image != blank and s.mobile_image != blank -%}
+<source media='(max-width: 749px)' srcset='{{ s.mobile_image | image_url: width: 750 }} 750w, {{ s.mobile_image | image_url: width: 1100 }} 1100w, {{ s.mobile_image | image_url: width: 1500 }} 1500w' sizes='100vw'>
+{%- endif -%}
+{{ main_img | image_url: width: 2400 | image_tag: class: 'sig-hero__img', widths: '750, 1100, 1500, 1920, 2400', sizes: '100vw', loading: img_loading, fetchpriority: img_priority, alt: alt_text }}
+</picture>
+{%- else -%}
+{{ 'hero-apparel-1' | placeholder_svg_tag: 'sig-hero__img sig-hero__placeholder' }}
+{%- endif -%}
+</div>
+<div class='sig-hero__overlay' aria-hidden='true'></div>
+{%- if s.banner_link != blank -%}<a class='sig-hero__link' href='{{ s.banner_link }}' aria-label='{{ s.banner_link_label | default: alt_text | escape }}'></a>{%- endif -%}
+<div class='sig-hero__inner'><div class='sig-hero__content'>
+{%- for block in section.blocks -%}
+{%- assign b = block.settings -%}
+{%- case block.type -%}
+{%- when 'logo' -%}
+{%- if b.image != blank -%}
+{%- assign logo_alt = b.alt | default: b.image.alt | default: shop.name -%}
+{%- capture logo_img -%}{{ b.image | image_url: width: 600 | image_tag: widths: '200, 300, 400, 600', sizes: '(min-width: 750px) 400px, 300px', loading: 'lazy', alt: logo_alt }}{%- endcapture -%}
+<div class='sig-hero__logo sig-b-{{ block.id }}' {{ block.shopify_attributes }}>{%- if b.link != blank -%}<a href='{{ b.link }}'>{{ logo_img }}</a>{%- else -%}{{ logo_img }}{%- endif -%}</div>
+{%- endif -%}
+{%- when 'heading' -%}
+{%- if b.text != blank -%}<{{ b.tag }} class='sig-hero__heading sig-b-{{ block.id }}' {{ block.shopify_attributes }}>{{ b.text | escape }}</{{ b.tag }}>{%- endif -%}
+{%- when 'text' -%}
+{%- if b.text != blank -%}<div class='sig-hero__text sig-b-{{ block.id }}' {{ block.shopify_attributes }}>{{ b.text }}</div>{%- endif -%}
+{%- when 'button' -%}
+{%- if b.label != blank -%}<a class='sig-hero__btn sig-b-{{ block.id }}' href='{{ b.link | default: '#' }}'{% if b.new_tab %} target='_blank' rel='noopener'{% endif %} {{ block.shopify_attributes }}>{{ b.label | escape }}</a>{%- endif -%}
+{%- when 'spacer' -%}
+<div class='sig-hero__spacer sig-b-{{ block.id }}' aria-hidden='true' {{ block.shopify_attributes }}></div>
+{%- endcase -%}
+{%- endfor -%}
+</div></div>
+</div>
+
+{% schema %}
+{"name":"Signature hero banner","max_blocks":14,"settings":[
+{"type":"header","content":"Images"},
+{"type":"image_picker","id":"image","label":"Desktop image"},
+{"type":"image_picker","id":"mobile_image","label":"Mobile image","info":"Optional. If empty, the desktop image is also used on mobile."},
+{"type":"text","id":"image_alt","label":"Image description (alt text)"},
+{"type":"select","id":"image_position_desktop","label":"Desktop image focus","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Left"},{"value":"center center","label":"Center"},{"value":"right center","label":"Right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom"},{"value":"right bottom","label":"Bottom right"}]},
+{"type":"select","id":"image_position_mobile","label":"Mobile image focus","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Left"},{"value":"center center","label":"Center"},{"value":"right center","label":"Right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom"},{"value":"right bottom","label":"Bottom right"}]},
+{"type":"color","id":"background_color","label":"Background colour (behind image)","default":"#101418"},
+{"type":"header","content":"Height"},
+{"type":"select","id":"desktop_height_mode","label":"Desktop height","default":"fixed","options":[{"value":"fixed","label":"Fixed height"},{"value":"auto","label":"Match image (no cropping)"}]},
+{"type":"range","id":"desktop_height","label":"Desktop fixed height","min":200,"max":1000,"step":10,"unit":"px","default":560},
+{"type":"select","id":"mobile_height_mode","label":"Mobile height","default":"fixed","options":[{"value":"fixed","label":"Fixed height"},{"value":"auto","label":"Match image (no cropping)"}]},
+{"type":"range","id":"mobile_height","label":"Mobile fixed height","min":200,"max":900,"step":10,"unit":"px","default":520,"info":"If text is cut off on mobile, increase this height."},
+{"type":"header","content":"Overlay (darkening behind text)"},
+{"type":"color","id":"overlay_color","label":"Overlay colour","default":"#000000"},
+{"type":"select","id":"overlay_type","label":"Desktop overlay","default":"left","options":[{"value":"none","label":"None"},{"value":"left","label":"Fade from left"},{"value":"right","label":"Fade from right"},{"value":"top","label":"Fade from top"},{"value":"bottom","label":"Fade from bottom"},{"value":"solid","label":"Solid"}]},
+{"type":"range","id":"overlay_opacity","label":"Desktop overlay strength","min":0,"max":100,"step":5,"unit":"%","default":70},
+{"type":"range","id":"overlay_spread","label":"Desktop fade length","min":10,"max":100,"step":5,"unit":"%","default":60},
+{"type":"select","id":"mobile_overlay_type","label":"Mobile overlay","default":"solid","options":[{"value":"none","label":"None"},{"value":"left","label":"Fade from left"},{"value":"right","label":"Fade from right"},{"value":"top","label":"Fade from top"},{"value":"bottom","label":"Fade from bottom"},{"value":"solid","label":"Solid"}]},
+{"type":"range","id":"mobile_overlay_opacity","label":"Mobile overlay strength","min":0,"max":100,"step":5,"unit":"%","default":40},
+{"type":"range","id":"mobile_overlay_spread","label":"Mobile fade length","min":10,"max":100,"step":5,"unit":"%","default":100},
+{"type":"header","content":"Content position (desktop)"},
+{"type":"select","id":"content_h_align","label":"Horizontal position","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},
+{"type":"select","id":"content_v_align","label":"Vertical position","default":"center","options":[{"value":"top","label":"Top"},{"value":"center","label":"Middle"},{"value":"bottom","label":"Bottom"}]},
+{"type":"select","id":"text_align","label":"Text alignment","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},
+{"type":"range","id":"content_max_width","label":"Content width","min":200,"max":1200,"step":10,"unit":"px","default":520},
+{"type":"range","id":"content_padding_x","label":"Side spacing","min":0,"max":200,"step":5,"unit":"px","default":90},
+{"type":"range","id":"content_padding_y","label":"Top / bottom spacing","min":0,"max":200,"step":5,"unit":"px","default":40},
+{"type":"header","content":"Content position (mobile)"},
+{"type":"select","id":"mobile_content_h_align","label":"Horizontal position","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},
+{"type":"select","id":"mobile_content_v_align","label":"Vertical position","default":"center","options":[{"value":"top","label":"Top"},{"value":"center","label":"Middle"},{"value":"bottom","label":"Bottom"}]},
+{"type":"select","id":"mobile_text_align","label":"Text alignment","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},
+{"type":"range","id":"mobile_padding_x","label":"Side spacing","min":0,"max":60,"step":1,"unit":"px","default":20},
+{"type":"range","id":"mobile_padding_y","label":"Top / bottom spacing","min":0,"max":100,"step":2,"unit":"px","default":32},
+{"type":"header","content":"Section spacing and shape"},
+{"type":"range","id":"margin_top","label":"Space above (desktop)","min":0,"max":120,"step":4,"unit":"px","default":0},
+{"type":"range","id":"margin_bottom","label":"Space below (desktop)","min":0,"max":120,"step":4,"unit":"px","default":0},
+{"type":"range","id":"margin_top_mobile","label":"Space above (mobile)","min":0,"max":80,"step":4,"unit":"px","default":0},
+{"type":"range","id":"margin_bottom_mobile","label":"Space below (mobile)","min":0,"max":80,"step":4,"unit":"px","default":0},
+{"type":"range","id":"border_radius","label":"Corner radius","min":0,"max":40,"step":1,"unit":"px","default":0},
+{"type":"header","content":"Fonts"},
+{"type":"checkbox","id":"use_custom_fonts","label":"Use the fonts below instead of the theme font","default":false},
+{"type":"font_picker","id":"heading_font","label":"Heading font","default":"assistant_n7"},
+{"type":"font_picker","id":"body_font","label":"Text and button font","default":"assistant_n4"},
+{"type":"header","content":"Link (optional)"},
+{"type":"url","id":"banner_link","label":"Make the whole banner clickable","info":"Leave empty if only the button should be clickable."},
+{"type":"text","id":"banner_link_label","label":"Link description for screen readers","default":"Shop the collection"}
+],
+"blocks":[
+{"type":"logo","name":"Logo / small image","settings":[
+{"type":"image_picker","id":"image","label":"Image"},
+{"type":"text","id":"alt","label":"Image description (alt text)"},
+{"type":"url","id":"link","label":"Link (optional)"},
+{"type":"range","id":"width_desktop","label":"Width (desktop)","min":40,"max":500,"step":10,"unit":"px","default":190},
+{"type":"range","id":"width_mobile","label":"Width (mobile)","min":30,"max":300,"step":10,"unit":"px","default":120},
+{"type":"range","id":"space_after_desktop","label":"Space below (desktop)","min":0,"max":80,"step":2,"unit":"px","default":36},
+{"type":"range","id":"space_after_mobile","label":"Space below (mobile)","min":0,"max":60,"step":2,"unit":"px","default":20}
+]},
+{"type":"heading","name":"Heading line","settings":[
+{"type":"text","id":"text","label":"Text","default":"Heading line"},
+{"type":"select","id":"tag","label":"HTML tag","default":"h2","options":[{"value":"h1","label":"H1"},{"value":"h2","label":"H2"},{"value":"h3","label":"H3"},{"value":"h4","label":"H4"},{"value":"p","label":"Paragraph"},{"value":"div","label":"Plain text"}]},
+{"type":"header","content":"Style"},
+{"type":"select","id":"font_style","label":"Font style","default":"normal","options":[{"value":"normal","label":"Normal"},{"value":"italic","label":"Italic"}]},
+{"type":"select","id":"font_weight","label":"Font weight","default":"700","options":[{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"},{"value":"800","label":"Extra-bold"},{"value":"900","label":"Black"}]},
+{"type":"checkbox","id":"uppercase","label":"Capital letters","default":true},
+{"type":"color","id":"color","label":"Text colour","default":"#ffffff"},
+{"type":"range","id":"size_desktop","label":"Size (desktop)","min":12,"max":200,"step":2,"unit":"px","default":56},
+{"type":"range","id":"size_mobile","label":"Size (mobile)","min":12,"max":120,"step":2,"unit":"px","default":30},
+{"type":"range","id":"line_height","label":"Line height","min":0.8,"max":2,"step":0.1,"default":1.1},
+{"type":"range","id":"letter_spacing","label":"Letter spacing","min":-5,"max":20,"step":0.5,"unit":"px","default":0},
+{"type":"checkbox","id":"text_shadow","label":"Soft text shadow","default":true},
+{"type":"header","content":"Underline bar"},
+{"type":"checkbox","id":"underline","label":"Show underline bar","default":false},
+{"type":"color","id":"underline_color","label":"Underline colour","default":"#ffffff"},
+{"type":"range","id":"underline_width","label":"Underline length (% of text)","min":10,"max":100,"step":5,"unit":"%","default":50},
+{"type":"range","id":"underline_thickness","label":"Underline thickness","min":1,"max":12,"step":1,"unit":"px","default":3},
+{"type":"range","id":"underline_gap","label":"Gap above underline","min":0,"max":30,"step":1,"unit":"px","default":6},
+{"type":"header","content":"Spacing"},
+{"type":"range","id":"space_after_desktop","label":"Space below (desktop)","min":0,"max":80,"step":2,"unit":"px","default":0},
+{"type":"range","id":"space_after_mobile","label":"Space below (mobile)","min":0,"max":60,"step":2,"unit":"px","default":0}
+]},
+{"type":"text","name":"Text","settings":[
+{"type":"richtext","id":"text","label":"Text","default":"<p>Add a short description here.</p>"},
+{"type":"select","id":"font_weight","label":"Font weight","default":"400","options":[{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}]},
+{"type":"color","id":"color","label":"Text colour","default":"#ffffff"},
+{"type":"range","id":"size_desktop","label":"Size (desktop)","min":12,"max":40,"step":1,"unit":"px","default":20},
+{"type":"range","id":"size_mobile","label":"Size (mobile)","min":11,"max":28,"step":1,"unit":"px","default":15},
+{"type":"range","id":"line_height","label":"Line height","min":1,"max":2.4,"step":0.1,"default":1.5},
+{"type":"range","id":"letter_spacing","label":"Letter spacing","min":-2,"max":10,"step":0.5,"unit":"px","default":0},
+{"type":"range","id":"max_width","label":"Text width (desktop)","min":200,"max":800,"step":10,"unit":"px","default":420},
+{"type":"checkbox","id":"text_shadow","label":"Soft text shadow","default":true},
+{"type":"range","id":"space_after_desktop","label":"Space below (desktop)","min":0,"max":80,"step":2,"unit":"px","default":0},
+{"type":"range","id":"space_after_mobile","label":"Space below (mobile)","min":0,"max":60,"step":2,"unit":"px","default":0}
+]},
+{"type":"button","name":"Button","settings":[
+{"type":"text","id":"label","label":"Label","default":"Shop now"},
+{"type":"url","id":"link","label":"Link"},
+{"type":"checkbox","id":"new_tab","label":"Open in a new tab","default":false},
+{"type":"header","content":"Colours"},
+{"type":"checkbox","id":"transparent_bg","label":"Transparent background (outline button)","default":false},
+{"type":"color","id":"bg_color","label":"Background","default":"#ffffff"},
+{"type":"color","id":"text_color","label":"Text","default":"#111111"},
+{"type":"color","id":"border_color","label":"Border","default":"#ffffff"},
+{"type":"color","id":"hover_bg_color","label":"Background on hover","default":"#111111"},
+{"type":"color","id":"hover_text_color","label":"Text on hover","default":"#ffffff"},
+{"type":"color","id":"hover_border_color","label":"Border on hover","default":"#ffffff"},
+{"type":"header","content":"Shape and size"},
+{"type":"range","id":"border_width","label":"Border width","min":0,"max":6,"step":1,"unit":"px","default":1},
+{"type":"range","id":"radius","label":"Corner radius","min":0,"max":50,"step":1,"unit":"px","default":4},
+{"type":"range","id":"padding_x","label":"Side padding","min":8,"max":80,"step":2,"unit":"px","default":28},
+{"type":"range","id":"padding_y","label":"Top / bottom padding","min":4,"max":40,"step":2,"unit":"px","default":14},
+{"type":"header","content":"Text"},
+{"type":"select","id":"font_weight","label":"Font weight","default":"600","options":[{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"},{"value":"800","label":"Extra-bold"}]},
+{"type":"checkbox","id":"uppercase","label":"Capital letters","default":false},
+{"type":"range","id":"size_desktop","label":"Size (desktop)","min":12,"max":28,"step":1,"unit":"px","default":16},
+{"type":"range","id":"size_mobile","label":"Size (mobile)","min":11,"max":24,"step":1,"unit":"px","default":14},
+{"type":"range","id":"letter_spacing","label":"Letter spacing","min":-2,"max":10,"step":0.5,"unit":"px","default":0.5},
+{"type":"header","content":"Spacing"},
+{"type":"range","id":"space_after_desktop","label":"Space below (desktop)","min":0,"max":80,"step":2,"unit":"px","default":0},
+{"type":"range","id":"space_after_mobile","label":"Space below (mobile)","min":0,"max":60,"step":2,"unit":"px","default":0}
+]},
+{"type":"spacer","name":"Spacer","settings":[
+{"type":"range","id":"height_desktop","label":"Height (desktop)","min":0,"max":200,"step":4,"unit":"px","default":20},
+{"type":"range","id":"height_mobile","label":"Height (mobile)","min":0,"max":120,"step":4,"unit":"px","default":12}
+]}
+],
+"presets":[{"name":"Signature hero banner","blocks":[
+{"type":"logo"},
+{"type":"heading","settings":{"text":"Signature","tag":"h2","font_style":"italic","font_weight":"500","uppercase":true,"size_desktop":56,"size_mobile":30}},
+{"type":"heading","settings":{"text":"Panjabi","tag":"div","font_weight":"800","uppercase":true,"size_desktop":78,"size_mobile":42}},
+{"type":"heading","settings":{"text":"Collection","tag":"div","font_weight":"700","uppercase":true,"size_desktop":52,"size_mobile":28,"underline":true,"underline_width":50,"space_after_desktop":20,"space_after_mobile":14}},
+{"type":"text","settings":{"text":"<p>Experience timeless sophistication with our Signature Panjabi — crafted for elegance, comfort, and confidence.</p>"}}
+]}]}
+{% endschema %}

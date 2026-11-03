@@ -1,0 +1,901 @@
+<div class="custom-hero-section section-{{ section.id }}-padding">
+  <div class="page-width custom-container-width">
+    <div class="custom-hero-container {% if section.settings.enable_animation %}has-animation{% endif %}">
+      
+      <!-- Background Images (Desktop & Mobile) -->
+      <div class="custom-hero-bg-image">
+        {%- if section.settings.desktop_bg_image != blank -%}
+          <img src="{{ section.settings.desktop_bg_image | image_url: width: 1800 }}" alt="Hero Desktop Background" class="desktop-bg {% if section.settings.mobile_bg_image != blank %}hide-under-990{% endif %}" loading="lazy">
+        {%- endif -%}
+        
+        {%- if section.settings.mobile_bg_image != blank -%}
+          <img src="{{ section.settings.mobile_bg_image | image_url: width: 800 }}" alt="Hero Mobile Background" class="mobile-bg hide-above-989" loading="lazy">
+        {%- endif -%}
+
+        {%- if section.settings.desktop_bg_image == blank and section.settings.mobile_bg_image == blank -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      <!-- Background Overlay -->
+      <div class="custom-hero-overlay"></div>
+
+      <!-- Left Content: Heading & Stats -->
+      <div class="custom-hero-left">
+        <div class="custom-hero-heading-wrapper">
+          {{ section.settings.heading_html }}
+        </div>
+
+        <div class="custom-hero-stats">
+          <div class="stat-item">
+            <span class="stat-num {% if section.settings.enable_countdown and section.settings.stat_1_target != blank %}countdown-elem{% endif %}" {% if section.settings.enable_countdown and section.settings.stat_1_target != blank %}data-target="{{ section.settings.stat_1_target }}"{% endif %}>
+              {% if section.settings.enable_countdown and section.settings.stat_1_target != blank %}0{% else %}{{ section.settings.stat_1_num }}{% endif %}
+            </span>
+            <span class="stat-text">{{ section.settings.stat_1_text }}</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num {% if section.settings.enable_countdown and section.settings.stat_2_target != blank %}countdown-elem{% endif %}" {% if section.settings.enable_countdown and section.settings.stat_2_target != blank %}data-target="{{ section.settings.stat_2_target }}"{% endif %}>
+              {% if section.settings.enable_countdown and section.settings.stat_2_target != blank %}0{% else %}{{ section.settings.stat_2_num }}{% endif %}
+            </span>
+            <span class="stat-text">{{ section.settings.stat_2_text }}</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num {% if section.settings.enable_countdown and section.settings.stat_3_target != blank %}countdown-elem{% endif %}" {% if section.settings.enable_countdown and section.settings.stat_3_target != blank %}data-target="{{ section.settings.stat_3_target }}"{% endif %}>
+              {% if section.settings.enable_countdown and section.settings.stat_3_target != blank %}0{% else %}{{ section.settings.stat_3_num }}{% endif %}
+            </span>
+            <span class="stat-text">{{ section.settings.stat_3_text }}</span>
+          </div>
+        </div>
+
+        <!-- Floating Quote Card -->
+        {%- if section.settings.show_quote_card -%}
+          <div class="custom-hero-quote-card">
+            {%- if section.settings.quote_image != blank -%}
+              <div class="quote-img">
+                <img src="{{ section.settings.quote_image | image_url: width: 200 }}" alt="Quote Author" loading="lazy">
+              </div>
+            {%- endif -%}
+            <div class="quote-text">
+              <p>{{ section.settings.quote_text }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Right Content: Floating Product Card -->
+      {%- if section.settings.show_product_card -%}
+        <div class="custom-hero-right">
+          <div class="custom-product-card">
+            <div class="product-card-tags">
+              {%- if section.settings.tag_1 != blank -%}<span>{{ section.settings.tag_1 }}</span>{%- endif -%}
+              {%- if section.settings.tag_2 != blank -%}<span>{{ section.settings.tag_2 }}</span>{%- endif -%}
+            </div>
+            
+            <div class="product-card-info">
+              <div class="product-texts">
+                <h3>{{ section.settings.product_title }}</h3>
+                <div class="product-price-box">
+                  <span class="price">{{ section.settings.product_price }}</span>
+                  <span class="weight">{{ section.settings.product_weight }}</span>
+                </div>
+              </div>
+              <a href="{{ section.settings.product_link }}" class="product-arrow-btn" aria-label="Product Link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </a>
+            </div>
+
+            <div class="product-card-image">
+              {%- if section.settings.product_image != blank -%}
+                <img src="{{ section.settings.product_image | image_url: width: 600 }}" alt="Product" loading="lazy">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-hero-section {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .custom-hero-section .page-width {
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+
+  /* Container Width Control */
+  .custom-container-width {
+    max-width: {{ section.settings.container_width }}px;
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  
+  .custom-hero-container {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    min-height: {{ section.settings.desktop_height }}px;
+    display: flex;
+    justify-content: {% if section.settings.content_position == 'left' %}space-between{% elsif section.settings.content_position == 'right' %}space-between{% else %}center{% endif %};
+    align-items: center;
+    padding: 50px;
+    background-color: #f3f3f3;
+  }
+
+  /* Animation Entry Classes */
+  .custom-hero-container.has-animation .custom-hero-left > * {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .custom-hero-container.has-animation .custom-hero-heading-wrapper { animation-delay: 0.1s; }
+  .custom-hero-container.has-animation .custom-hero-stats { animation-delay: 0.3s; }
+  .custom-hero-container.has-animation .custom-hero-quote-card { animation-delay: 0.5s; }
+
+  .custom-hero-container.has-animation .custom-hero-right {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+    animation: heroScaleUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  }
+
+  @keyframes heroFadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes heroScaleUp {
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Flex order based on position */
+  .custom-hero-left {
+    order: {% if section.settings.content_position == 'right' %}2{% else %}1{% endif %};
+  }
+  .custom-hero-right {
+    order: {% if section.settings.content_position == 'right' %}1{% else %}2{% endif %};
+  }
+
+  .custom-hero-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  .custom-hero-bg-image img, 
+  .custom-hero-bg-image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Background Overlay */
+  .custom-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 2;
+  }
+
+  .custom-hero-left, .custom-hero-right {
+    position: relative;
+    z-index: 3;
+  }
+
+  .custom-hero-left {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .custom-hero-heading-wrapper h1, 
+  .custom-hero-heading-wrapper h2 {
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.1;
+    color: {{ section.settings.heading_color }};
+    margin: 0;
+    font-weight: 700;
+  }
+  .custom-hero-heading-wrapper h2 span,
+  .custom-hero-heading-wrapper p span {
+    font-weight: 400;
+  }
+
+  /* Stats Styling */
+  .custom-hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: {{ section.settings.stat_num_color }};
+  }
+  .stat-text {
+    font-size: 12px;
+    color: {{ section.settings.stat_label_color }};
+    opacity: 0.9;
+  }
+  .stat-divider {
+    width: 1px;
+    height: 25px;
+    background-color: {{ section.settings.stat_num_color }};
+    opacity: 0.2;
+  }
+
+  /* Quote Card Style with dynamic position & blur */
+  .custom-hero-quote-card {
+    background: {{ section.settings.quote_card_bg }};
+    backdrop-filter: blur({{ section.settings.quote_card_blur }}px);
+    -webkit-backdrop-filter: blur({{ section.settings.quote_card_blur }}px);
+    padding: 16px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-top: {{ section.settings.quote_margin_top }}px;
+    margin-bottom: {{ section.settings.quote_margin_bottom }}px;
+    margin-left: {{ section.settings.quote_margin_left }}px;
+  }
+  .quote-img img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .quote-text p {
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 0;
+    color: {{ section.settings.quote_text_color }};
+  }
+
+  /* Product Card Style with dynamic position & blur */
+  .custom-hero-right {
+    margin-top: {{ section.settings.product_margin_top }}px;
+    margin-bottom: {{ section.settings.product_margin_bottom }}px;
+    margin-right: {{ section.settings.product_margin_right }}px;
+  }
+  .custom-product-card {
+    background: {{ section.settings.product_card_bg }};
+    backdrop-filter: blur({{ section.settings.product_card_blur }}px);
+    -webkit-backdrop-filter: blur({{ section.settings.product_card_blur }}px);
+    border-radius: 20px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .product-card-tags span {
+    font-size: 11px;
+    background: {{ section.settings.product_tag_bg }};
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: {{ section.settings.product_tag_color }};
+    margin-right: 6px;
+  }
+  .product-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .product-texts h3 {
+    font-size: 16px;
+    margin: 0 0 5px 0;
+    color: {{ section.settings.product_title_color }};
+  }
+  .product-price-box {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .product-price-box .price {
+    color: {{ section.settings.product_price_color }};
+  }
+  .product-price-box .weight {
+    color: {{ section.settings.product_weight_color }};
+    font-weight: 400;
+  }
+  .product-arrow-btn {
+    width: 32px;
+    height: 32px;
+    background: {{ section.settings.btn_bg_color }};
+    color: {{ section.settings.btn_text_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  .product-arrow-btn:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    transform: scale(1.08);
+  }
+  .product-card-image img,
+  .product-card-image svg {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  /* Responsive Display Rules */
+  .hide-above-989 { display: none; }
+  .hide-under-990 { display: block; }
+
+  @media screen and (max-width: 989px) {
+    .custom-hero-container {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 30px 20px;
+      gap: 30px;
+      min-height: {{ section.settings.mobile_height }}px;
+    }
+    .custom-hero-left, .custom-hero-right {
+      order: unset;
+      margin: 0 !important;
+    }
+    .custom-hero-left {
+      max-width: 100%;
+    }
+    .custom-hero-right {
+      display: flex;
+      justify-content: center;
+    }
+    .custom-product-card {
+      width: 100%;
+    }
+    .custom-hero-heading-wrapper h1, 
+    .custom-hero-heading-wrapper h2 {
+      font-size: 32px !important;
+    }
+    .hide-above-989 { display: block; }
+    .hide-under-990 { display: none; }
+  }
+</style>
+
+{%- if section.settings.enable_countdown -%}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const counters = document.querySelectorAll('.section-{{ section.id }}-padding .countdown-elem');
+    const speed = 200; // Counting speed
+
+    const startCounting = (counter) => {
+      const targetStr = counter.getAttribute('data-target');
+      // Extract numeric value and suffix (like '+', '%', '★')
+      const targetNum = parseFloat(targetStr.replace(/[^0-9.]/g, ''));
+      const suffix = targetStr.replace(/[0-9.]/g, '');
+      let count = 0;
+
+      const updateCount = () => {
+        const inc = targetNum / speed;
+        count += inc;
+        if (count < targetNum) {
+          // Keep decimals if target has decimal, otherwise floor it
+          counter.innerText = (targetNum % 1 !== 0 ? count.toFixed(1) : Math.floor(count)) + suffix;
+          setTimeout(updateCount, 15);
+        } else {
+          counter.innerText = targetStr;
+        }
+      };
+      updateCount();
+    };
+
+    // Trigger on scroll intersection or immediately if in view
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          counters.forEach(counter => startCounting(counter));
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    const sectionEl = document.querySelector('.section-{{ section.id }}-padding');
+    if (sectionEl) {
+      observer.observe(sectionEl);
+    }
+  });
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom Hero Banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Container Control"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Max Container Width",
+      "default": 1200
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content Position (Desktop)",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left Content / Right Product"
+        },
+        {
+          "value": "right",
+          "label": "Right Content / Left Product"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Animation & Effects Control"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable Entry Animation",
+      "default": true,
+      "info": "Smooth fade-up & scale animation when section loads."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_countdown",
+      "label": "Enable Statistics Countdown Effect",
+      "default": true,
+      "info": "Counts up numbers dynamically from 0."
+    },
+    {
+      "type": "header",
+      "content": "Background Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_bg_image",
+      "label": "Desktop Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_bg_image",
+      "label": "Mobile Background Image"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Desktop Min Height",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Mobile Min Height",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Background Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Text Colors Control"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "stat_num_color",
+      "label": "Statistics Number Color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Statistics Label Color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Heading Settings"
+    },
+    {
+      "type": "liquid",
+      "id": "heading_html",
+      "label": "Heading HTML",
+      "default": "<h2>Cosmetics for the whole body.<br><span style='font-weight: 400;'>For every body.</span></h2>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Font Size",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Statistics Settings & Countdown Targets"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_num",
+      "label": "Stat 1 Final Display Text",
+      "default": "10K+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_target",
+      "label": "Stat 1 Target Value (For Countdown)",
+      "default": "10K+",
+      "info": "Enter the target number or text with suffix (e.g., 10K+, 4.9, 100%)"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_text",
+      "label": "Stat 1 Label",
+      "default": "Happy Customers"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_num",
+      "label": "Stat 2 Final Display Text",
+      "default": "4.9★"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_target",
+      "label": "Stat 2 Target Value (For Countdown)",
+      "default": "4.9"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_text",
+      "label": "Stat 2 Label",
+      "default": "Average Rating"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_num",
+      "label": "Stat 3 Final Display Text",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_target",
+      "label": "Stat 3 Target Value (For Countdown)",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_text",
+      "label": "Stat 3 Label",
+      "default": "Natural Ingredients"
+    },
+    {
+      "type": "header",
+      "content": "Quote Card Settings & Position"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quote_card",
+      "label": "Show Quote Card",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "quote_card_bg",
+      "label": "Card Background",
+      "default": "rgba(255, 255, 255, 0.85)"
+    },
+    {
+      "type": "color",
+      "id": "quote_text_color",
+      "label": "Card Text Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "quote_card_blur",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Backdrop Blur",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "quote_margin_top",
+      "min": -50,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Top (Position)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "quote_margin_bottom",
+      "min": -50,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Bottom (Position)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "quote_margin_left",
+      "min": -50,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Left (Position)",
+      "default": 0
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_image",
+      "label": "Quote Author Image"
+    },
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "label": "Quote Text",
+      "default": "We were inspired by you and wanted to turn everyday care into a special ritual."
+    },
+    {
+      "type": "header",
+      "content": "Product Card Settings, Colors & Position"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_card",
+      "label": "Show Product Card",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "product_card_bg",
+      "label": "Card Background",
+      "default": "rgba(255, 255, 255, 0.85)"
+    },
+    {
+      "type": "range",
+      "id": "product_card_blur",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Backdrop Blur",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "product_margin_top",
+      "min": -100,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Top (Position)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "product_margin_bottom",
+      "min": -100,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Bottom (Position)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "product_margin_right",
+      "min": -100,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Right (Position)",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product Title Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Price Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "product_weight_color",
+      "label": "Weight / Size Color",
+      "default": "#777777"
+    },
+    {
+      "type": "color",
+      "id": "product_tag_bg",
+      "label": "Tag Background Color",
+      "default": "rgba(0,0,0,0.05)"
+    },
+    {
+      "type": "color",
+      "id": "product_tag_color",
+      "label": "Tag Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Icon Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Button Hover Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Button Hover Icon Color",
+      "default": "#111111"
+    },
+    {
+      "type": "text",
+      "id": "tag_1",
+      "label": "Tag 1",
+      "default": "Aesthetics"
+    },
+    {
+      "type": "text",
+      "id": "tag_2",
+      "label": "Tag 2",
+      "default": "Comfort"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "Coconut body butter"
+    },
+    {
+      "type": "text",
+      "id": "product_price",
+      "label": "Product Price",
+      "default": "$24"
+    },
+    {
+      "type": "text",
+      "id": "product_weight",
+      "label": "Product Weight / Size",
+      "default": "200 ml"
+    },
+    {
+      "type": "url",
+      "id": "product_link",
+      "label": "Product Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero Banner without slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,494 @@
+<div class="we-serve-section section-{{ section.id }}-padding" style="background-color: {{ section.settings.bg_color }};">
+  <div class="page-width {% if section.settings.full_width %}full-width-container{% endif %}">
+    
+    <div class="we-serve-content-wrapper" style="--text-color-primary: {{ section.settings.primary_text_color }};">
+      
+      <h2 class="we-serve-title">
+        <span class="static-line">WE</span>
+        <span class="static-line">SERVE</span>
+        <span class="dynamic-word-container">
+          {%- assign first_block = section.blocks.first -%}
+          {%- assign first_color = first_block.settings.word_color | default: '#FFFFFF' -%}
+          <span id="dynamicWord-{{ section.id }}" class="dynamic-word" style="color: {{ first_color }};">
+            {%- if first_block -%}{{ first_block.settings.word }}{%- else -%}ATHLETES{%- endif -%}
+          </span>
+          {% if section.settings.show_asterisk %}
+            <span id="dynamicAsterisk-{{ section.id }}" class="dynamic-asterisk" style="color: {{ first_color }};">*</span>
+          {% endif %}
+        </span>
+      </h2>
+
+      {% if section.settings.show_subtitle and section.settings.subtitle_text != blank %}
+        <p class="we-serve-subtitle" style="color: {{ section.settings.subtitle_color }};">
+          {{ section.settings.subtitle_text }}
+        </p>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    padding-left: {{ section.settings.padding_left_mobile }}px;
+    padding-right: {{ section.settings.padding_right_mobile }}px;
+    margin-top: {{ section.settings.margin_top_mobile }}px;
+    margin-bottom: {{ section.settings.margin_bottom_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+      padding-left: {{ section.settings.padding_left_desktop }}px;
+      padding-right: {{ section.settings.padding_right_desktop }}px;
+      margin-top: {{ section.settings.margin_top_desktop }}px;
+      margin-bottom: {{ section.settings.margin_bottom_desktop }}px;
+    }
+  }
+
+  .we-serve-section {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .we-serve-section .page-width {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .we-serve-section .full-width-container {
+    max-width: 100% !important;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .we-serve-title {
+    font-family: var(--font-heading-family, inherit);
+    font-weight: 900;
+    line-height: 0.95;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    text-transform: uppercase;
+    font-size: {{ section.settings.font_size_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .we-serve-title {
+      font-size: {{ section.settings.font_size_desktop }}px;
+    }
+  }
+
+  .we-serve-title .static-line {
+    color: var(--text-color-primary);
+    display: block;
+  }
+
+  .we-serve-title .dynamic-word-container {
+    display: inline-flex;
+    align-items: flex-start;
+  }
+
+  .we-serve-title .dynamic-asterisk {
+    font-size: 0.6em;
+    line-height: 1;
+    margin-left: 2px;
+  }
+
+  .we-serve-subtitle {
+    margin-top: 1.5rem;
+    font-style: italic;
+    font-size: 1.2rem;
+  }
+
+  .dynamic-word {
+    transition: opacity {{ section.settings.animation_speed | divided_by: 2.0 }}ms ease, transform {{ section.settings.animation_speed | divided_by: 2.0 }}ms ease, color 0.3s ease;
+    display: inline-block;
+  }
+
+  .dynamic-word.animating-out {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  .dynamic-word.animating-in {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const words = [
+      {%- for block in section.blocks -%}
+        {{ block.settings.word | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ];
+
+    const wordColors = [
+      {%- for block in section.blocks -%}
+        {{ block.settings.word_color | default: '#FFFFFF' | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ];
+
+    if (words.length === 0) return;
+
+    const wordElement = document.getElementById('dynamicWord-{{ section.id }}');
+    const asteriskElement = document.getElementById('dynamicAsterisk-{{ section.id }}');
+    const intervalSpeed = {{ section.settings.animation_interval }};
+    const animSpeed = {{ section.settings.animation_speed }};
+    const stopAtLast = {{ section.settings.stop_at_last | json }};
+    
+    let currentIndex = 0;
+
+    function changeWord() {
+      if (stopAtLast && currentIndex >= words.length - 1) {
+        wordElement.textContent = words[words.length - 1];
+        const lastColor = wordColors[words.length - 1] || '#FFFFFF';
+        wordElement.style.color = lastColor;
+        if (asteriskElement) asteriskElement.style.color = lastColor;
+        return;
+      }
+
+      wordElement.classList.add('animating-out');
+
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % words.length;
+        wordElement.textContent = words[currentIndex];
+        
+        const currentColor = wordColors[currentIndex] || '#FFFFFF';
+        wordElement.style.color = currentColor;
+        if (asteriskElement) asteriskElement.style.color = currentColor;
+        
+        wordElement.classList.remove('animating-out');
+        wordElement.classList.add('animating-in');
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            wordElement.classList.remove('animating-in');
+          });
+        });
+
+      }, animSpeed / 2);
+    }
+
+    const sectionElement = document.querySelector('.section-{{ section.id }}-padding');
+    let timer = null;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!timer && !(stopAtLast && currentIndex >= words.length - 1)) {
+            timer = setInterval(changeWord, intervalSpeed);
+          }
+        } else {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(sectionElement);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "We Serve Animated Text",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 30,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Container Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Make Full Width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Max Container Width",
+      "default": 1400
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "primary_text_color",
+      "label": "WE / SERVE Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Typography / Font Size"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 40,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading Font Size (Desktop)",
+      "default": 112
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 30,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Font Size (Mobile)",
+      "default": 56
+    },
+    {
+      "type": "header",
+      "content": "Asterisk & Subtitle"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_asterisk",
+      "label": "Show Asterisk (*)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subtitle",
+      "label": "Show Subtitle",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subtitle_text",
+      "label": "Subtitle Text",
+      "default": "*If you have a body, you are an athlete"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#AAAAAA"
+    },
+    {
+      "type": "header",
+      "content": "Animation Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "stop_at_last",
+      "label": "Stop at Last Word (ATHLETES)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "animation_interval",
+      "min": 500,
+      "max": 4000,
+      "step": 100,
+      "unit": "ms",
+      "label": "Time Between Word Change",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 200,
+      "max": 1500,
+      "step": 100,
+      "unit": "ms",
+      "label": "Transition Fade Speed",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Desktop Spacing (Margin / Padding)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_left_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Left",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_right_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Right",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "margin_top_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile Spacing (Margin / Padding)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top Mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom Mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Left Mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Right Mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_top_mobile",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Top Mobile",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom_mobile",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin Bottom Mobile",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "word_block",
+      "name": "Dynamic Word",
+      "settings": [
+        {
+          "type": "text",
+          "id": "word",
+          "label": "Word",
+          "default": "ATHLETES"
+        },
+        {
+          "type": "color",
+          "id": "word_color",
+          "label": "Word Color",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "We Serve Animated Text",
+      "blocks": [
+        { "type": "word_block", "settings": { "word": "KIDS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "PROS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "DREAMERS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "WOMEN", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "TEAMS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "COACHES", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "MEN", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "BEGINNERS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "GIRLS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "REBELS", "word_color": "#FFFFFF" } },
+        { "type": "word_block", "settings": { "word": "ATHLETES", "word_color": "#FFFFFF" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

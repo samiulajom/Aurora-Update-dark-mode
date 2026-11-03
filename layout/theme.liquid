@@ -1,0 +1,199 @@
+<!doctype html>
+<html class="no-js " lang="{{ shop.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_header_bg }}">
+    <link rel="preconnect" href="//cdn.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.shopify.com">
+    <link rel="preconnect" href="//fonts.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="//fonts.shopify.com">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- if settings.favicon != blank -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {% if current_tags %}
+        {% assign meta_tags = current_tags | join: ', ' %}
+        &ndash;
+        {{ 'general.meta.tags' | t: tags: meta_tags }}
+      {% endif %}
+      {% if current_page != 1 %}
+        &ndash;
+        {{ 'general.meta.page' | t: page: current_page }}
+      {% endif %}
+      {% unless page_title contains shop.name %}
+        &ndash;
+        {{ shop.name }}
+      {% endunless %}
+    </title>
+   
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+      {% else %}
+      <meta name="description" content="{{ settings.meta_description | escape }}">
+    {%- endif -%}
+    
+    {%- render 'social-meta-tags' -%}
+    {%- render 'header-css' -%}
+      <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    {{ content_for_header }}
+    <link rel="stylesheet" href="https://style-cyan-seven.vercel.app/shadegrid.css" defer="">
+
+    {% comment %} <style>
+      
+
+        /* ক্যানভাসটিকে পুরো স্ক্রিন জুড়ে ব্যাকগ্রাউন্ড হিসেবে রাখা হয়েছে */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* যাতে পেজের অন্য এলিমেন্টে ক্লিক করতে সমস্যা না হয় */
+            z-index: 99;
+        }
+
+        .content {
+            text-align: center;
+            z-index: 1;
+        }
+
+    
+    </style> {% endcomment %}
+  </head>
+
+ {% comment %} <!-- মাউস ট্রেইল দেখানোর জন্য ক্যানভাস -->
+    <canvas id="trailCanvas"></canvas>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script> {% endcomment %}
+{% comment %} end {% endcomment %}
+  <body id="store-{{ shop.permanent_domain | split: '.' | first }}" class="template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}" class="template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }} body-theme {% if settings.productpage == 'product-2' or settings.productpage == 'product-6' or settings.productpage == 'product-7' %} product-hide-breadcrumb {% endif %}">
+   {% assign lazy = false %}
+    <img {% if lazy %} loading = "lazy" {% endif %} width="99998" height="99999" alt="index" style="pointer-events: none; position: absolute; top: 0; left: 0; width: 98vw; height: 99vh; max-width: 98vw; max-height: 99vh;" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSI5OTk5OXB4IiBoZWlnaHQ9Ijk5OTk5cHgiIHZpZXdCb3g9IjAgMCA5OTk5OSA5OTk5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGZpbGwtb3BhY2l0eT0iMCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9Ijk5OTk5IiBoZWlnaHQ9Ijk5OTk5Ij48L3JlY3Q+IDwvZz4gPC9zdmc+">
+    {%- render 'loading' -%}
+    {%- section 'announcement-bar-slide' -%}
+    {%- section 'header' -%}
+    {%- section 'store-messages' -%}
+    <div class="page-container page-element is-moved-by-drawer">
+      {%- render 'breadcrumb' -%}
+      <main class="main-content" id="MainContent" role="main">
+        {%- if settings.enable_animationscroll -%}
+          <div id="js-scroll">
+          {% endif %}
+          {%- if settings.enable_animationscroll -%}
+            <div data-scroll-section>
+            {% endif %}
+            {%- render 'slideshow' -%}
+            {%- if settings.enable_animationscroll -%}
+            </div>
+          {% endif %}
+          {{ content_for_layout }}
+          {%- if settings.enable_animationscroll -%}
+          </div>
+        {% endif %}
+      </main>
+
+     {%- liquid
+      section 'banner-footer'
+      section 'newsletter-footer'
+      section 'footer'
+      if template == 'index' or request.design_mode
+      section 'pnewsletter'
+      endif
+      section 'product-suggest'
+      section 'cookie-policy'
+      section 'custom-color'
+     -%}
+    </div>
+    {%- liquid
+      render 'back-to-top' 
+      render 'menu-mobile' 
+      render 'bottom-contents' 
+      render 'quickview' 
+      render 'popup-compare' 
+      render 'header-js' 
+    -%}
+   <script src="https://style-cyan-seven.vercel.app/script.js" defer=""></script>
+{% comment %} 
+   <script>
+        const canvas = document.getElementById('trailCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // ক্যানভাসের সাইজ উইন্ডোর সমান করা
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // মাউসের পয়েন্টগুলো স্টোর করার অ্যারে
+        const points = [];
+        // লাইনের সর্বোচ্চ দৈর্ঘ্য (কয়টি পয়েন্ট থাকবে)
+        const maxPoints = 25; 
+
+        // মাউস মুভমেন্ট ট্র্যাক করা
+        window.addEventListener('mousemove', (e) => {
+            // নতুন পয়েন্ট অবজেক্ট তৈরি করা
+            const newPoint = { x: e.clientX, y: e.clientY, alpha: 1 };
+            points.push(newPoint);
+
+            // পয়েন্ট সংখ্যা লিমিটের বেশি হয়ে গেলে প্রথম দিক থেকে বাদ দেওয়া
+            if (points.length > maxPoints) {
+                points.shift();
+            }
+
+            // GSAP ব্যবহার করে লাইনের শেষের পয়েন্টগুলোর অপাসিটি (alpha) আস্তে আস্তে কমানো
+            // এর ফলে মাউস থামালে বা চলে যাওয়ার পর লেজটা সুন্দরভাবে ভ্যানিশ হয়ে যায়
+            gsap.to(newPoint, {
+                alpha: 0,
+                duration: 0.6, // কত দ্রুত লাইনটি মুছে যাবে (সেকেন্ডে)
+                ease: "power1.out",
+                onComplete: () => {
+                    // অ্যানিমেশন শেষ হলে পয়েন্টটি অ্যারে থেকে রিমুভ করে দেওয়া
+                    const index = points.indexOf(newPoint);
+                    if (index > -1) points.splice(index, 1);
+                }
+            });
+        });
+
+        // ক্যানভাসে ড্রয়িং লুপ (Animation Loop)
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (points.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+
+                // প্রতিটি পয়েন্টকে কার্ভ করে জোড়া লাগানো (স্মুথ লাইনের জন্য)
+                for (let i = 1; i < points.length - 1; i++) {
+                    const xc = (points[i].x + points[i + 1].x) / 2;
+                    const yc = (points[i].y + points[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+                }
+
+                // লাইনের স্টাইল
+                ctx.strokeStyle = `rgba(255, 255, 255, ${points[points.length - 1]?.alpha || 1})`;
+                ctx.lineWidth = 2.5; // লাইনের থিকনেস
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        // লুপ চালু করা
+        render();
+    </script> {% endcomment %}
+ 
+  
+  
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{% layout none %}
+{% paginate search.results by 50 %}
+  {% for item in search.results %}
+    {% if item.object_type == 'product' %}
+      <div data-recently-viewed-item data-product-id="{{ item.id }}">
+        <div class="theme-card-wrapper">
+          {%- render 'product-card', product: item -%}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endpaginate %}

@@ -1,0 +1,599 @@
+{{- '//cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css' | stylesheet_tag -}}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .video-slider-section {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: {{ section.settings.section_side_padding }}px;
+    padding-right: {{ section.settings.section_side_padding }}px;
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+    background-color: {{ section.settings.section_bg }};
+  }
+
+  #shopify-section-{{ section.id }} .video-slider-container {
+    max-width: {% if section.settings.full_width %}100%{% else %}{{ section.settings.container_width }}px{% endif %};
+    margin: 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .video-header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .video-section-heading {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: {{ section.settings.heading_color }};
+  }
+
+  #shopify-section-{{ section.id }} .video-navigation-wrapper {
+    display: flex;
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper-button-prev,
+  #shopify-section-{{ section.id }} .video-swiper-button-next {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+    background-color: {{ section.settings.arrow_bg_color }} !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 !important;
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper-button-prev::after,
+  #shopify-section-{{ section.id }} .video-swiper-button-next::after {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper-button-prev:hover,
+  #shopify-section-{{ section.id }} .video-swiper-button-next:hover {
+    background-color: {{ section.settings.arrow_hover_bg_color }} !important;
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper-button-prev svg,
+  #shopify-section-{{ section.id }} .video-swiper-button-next svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: {{ section.settings.arrow_icon_color }};
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper-button-prev:hover svg,
+  #shopify-section-{{ section.id }} .video-swiper-button-next:hover svg {
+    stroke: {{ section.settings.arrow_hover_icon_color }};
+  }
+
+  #shopify-section-{{ section.id }} .video-swiper {
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .video-card {
+    position: relative;
+    border-radius: 0px;
+    overflow: hidden;
+    background-color: #000;
+    height: {{ section.settings.desktop_height }}px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #shopify-section-{{ section.id }} .video-media-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .video-media-wrapper video,
+  #shopify-section-{{ section.id }} .video-media-wrapper iframe,
+  #shopify-section-{{ section.id }} .video-media-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .video-poster {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 55px;
+    height: 55px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .video-media-wrapper:hover .play-button-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  #shopify-section-{{ section.id }} .play-button-overlay svg {
+    width: 22px;
+    height: 22px;
+    fill: #ffffff;
+    margin-left: 3px;
+  }
+
+  #shopify-section-{{ section.id }} .video-card-title {
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ section.settings.title_color }};
+    text-decoration: none;
+    display: block;
+  }
+
+  @media screen and (max-width: 768px) {
+    #shopify-section-{{ section.id }} .video-slider-section {
+      padding-top: {{ section.settings.mobile_padding_top }}px;
+      padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+      padding-left: {{ section.settings.mobile_side_padding }}px;
+      padding-right: {{ section.settings.mobile_side_padding }}px;
+      margin-top: {{ section.settings.mobile_margin_top }}px;
+      margin-bottom: {{ section.settings.mobile_margin_bottom }}px;
+    }
+    #shopify-section-{{ section.id }} .video-card {
+      height: {{ section.settings.mobile_height }}px;
+    }
+    #shopify-section-{{ section.id }} .video-section-heading {
+      font-size: 22px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="video-slider-section">
+  <div class="video-slider-container">
+    
+    <div class="video-header-wrapper">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="video-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      <div class="video-navigation-wrapper">
+        <div class="video-swiper-button-prev">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </div>
+        <div class="video-swiper-button-next">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swiper Slider -->
+    <div class="swiper video-swiper" id="video-swiper-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {%- for block in section.blocks -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="video-card">
+              <div class="video-media-wrapper" data-video-container>
+                {%- if block.settings.video_type == 'shopify' and block.settings.shopify_video != blank -%}
+                  {{ block.settings.shopify_video | video_tag: image_size: '1100x', loop: false, controls: false, muted: true, preload: 'metadata' }}
+                {%- elsif block.settings.video_type == 'external' and block.settings.external_video_url != blank -%}
+                  {%- if block.settings.external_video_url.type == 'youtube' -%}
+                    <iframe src="https://www.youtube.com/embed/{{ block.settings.external_video_url.id }}?enablejsapi=1&autoplay=0&mute=1&controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  {%- elsif block.settings.external_video_url.type == 'vimeo' -%}
+                    <iframe src="https://player.vimeo.com/video/{{ block.settings.external_video_url.id }}?autoplay=0&muted=1&controls=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if block.settings.poster_image != blank -%}
+                  <img src="{{ block.settings.poster_image | image_url: width: 800 }}" alt="{{ block.settings.title | escape }}" class="video-poster" loading="lazy">
+                {%- endif -%}
+
+                <div class="play-button-overlay">
+                  <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
+              </div>
+            </div>
+
+            {%- if block.settings.title != blank -%}
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}" class="video-card-title">{{ block.settings.title }}</a>
+              {%- else -%}
+                <span class="video-card-title">{{ block.settings.title }}</span>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const swiper = new Swiper('#video-swiper-{{ section.id }}', {
+      slidesPerView: 1.2,
+      spaceBetween: {{ section.settings.item_gap }},
+      grabCursor: true,
+      navigation: {
+        nextEl: '#shopify-section-{{ section.id }} .video-swiper-button-next',
+        prevEl: '#shopify-section-{{ section.id }} .video-swiper-button-prev',
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: {{ section.settings.desktop_columns }},
+        },
+      },
+    });
+
+    const videoContainers = document.querySelectorAll('#shopify-section-{{ section.id }} [data-video-container]');
+    videoContainers.forEach(container => {
+      const video = container.querySelector('video');
+      const iframe = container.querySelector('iframe');
+      const poster = container.querySelector('.video-poster');
+      const playOverlay = container.querySelector('.play-button-overlay');
+
+      container.addEventListener('click', function () {
+        if (poster) {
+          poster.style.display = 'none';
+        }
+        if (playOverlay) {
+          playOverlay.style.display = 'none';
+        }
+
+        if (video) {
+          video.muted = false;
+          video.controls = true;
+          video.play();
+        } else if (iframe) {
+          let src = iframe.src;
+          if (src.includes('youtube')) {
+            iframe.src = src.replace('autoplay=0', 'autoplay=1').replace('mute=1', 'mute=0').replace('controls=0', 'controls=1');
+          } else if (src.includes('vimeo')) {
+            iframe.src = src.replace('autoplay=0', 'autoplay=1').replace('muted=1', 'muted=0').replace('controls=0', 'controls=1');
+          }
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Video Slider Carousel",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "SUPERARE GEAR IN ACTION"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Make Section Full Width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Container Max Width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "desktop_columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columns on Desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 250,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop Video Height",
+      "default": 480
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile Video Height",
+      "default": 350
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap Between Items",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_side_padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Section Side Padding (Desktop)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Section Side Padding (Mobile)",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Colors Control"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Item Title Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow Icon Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_bg_color",
+      "label": "Arrow Hover Background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_icon_color",
+      "label": "Arrow Hover Icon Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing (Mobile)"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Padding Top",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Padding Bottom",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Margin Bottom",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video_item",
+      "name": "Video Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "video_type",
+          "label": "Video Source Type",
+          "options": [
+            {
+              "value": "shopify",
+              "label": "Shopify Uploaded Video"
+            },
+            {
+              "value": "external",
+              "label": "YouTube / Vimeo Link"
+            }
+          ],
+          "default": "shopify"
+        },
+        {
+          "type": "video",
+          "id": "shopify_video",
+          "label": "Shopify Video"
+        },
+        {
+          "type": "video_url",
+          "id": "external_video_url",
+          "accept": ["youtube", "vimeo"],
+          "label": "YouTube / Vimeo URL",
+          "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster_image",
+          "label": "Video Thumbnail / Poster Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Item Title",
+          "default": "S40 Italian Leather Gloves"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Item Link (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Slider Carousel",
+      "blocks": [
+        {
+          "type": "video_item",
+          "settings": {
+            "title": "S40 Italian Leather Gloves"
+          }
+        },
+        {
+          "type": "video_item",
+          "settings": {
+            "title": "Supergel Pro Leather Gloves"
+          }
+        },
+        {
+          "type": "video_item",
+          "settings": {
+            "title": "Finisher Tracksuit + Italian Leather Gloves"
+          }
+        },
+        {
+          "type": "video_item",
+          "settings": {
+            "title": "NYC Shop"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

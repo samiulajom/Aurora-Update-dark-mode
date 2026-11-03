@@ -1,0 +1,463 @@
+<!-- Swiper CSS CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<div class="custom-category-slider-section section-{{ section.id }}-padding">
+  <div class="page-width category-container-width">
+    
+    {%- if section.settings.section_heading != blank -%}
+      <div class="category-section-header">
+        <h2 style="color: {{ section.settings.heading_color }};">{{ section.settings.section_heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="category-swiper-outer">
+      <div class="swiper category-main-swiper-{{ section.id }}">
+        <div class="swiper-wrapper">
+          
+          {%- for block in section.blocks -%}
+            <div class="swiper-slide category-slide-item" {{ block.shopify_attributes }}>
+              <div class="category-card" style="background: {{ block.settings.card_bg }}; backdrop-filter: blur({{ block.settings.card_blur }}px); -webkit-backdrop-filter: blur({{ block.settings.card_blur }}px);">
+                
+                <!-- Top Label & Arrow Link -->
+                <div class="category-card-top">
+                  <span class="category-title" style="color: {{ block.settings.title_color }};">{{ block.settings.category_title }}</span>
+                  <a href="{{ block.settings.card_link }}" class="category-arrow-btn" style="background: {{ section.settings.arrow_btn_bg }}; color: {{ section.settings.arrow_btn_icon }};" aria-label="Category Link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  </a>
+                </div>
+
+                <!-- Card Image/Content -->
+                <div class="category-card-image">
+                  {%- if block.settings.card_image != blank -%}
+                    <img src="{{ block.settings.card_image | image_url: width: 600 }}" alt="{{ block.settings.category_title }}" loading="lazy">
+                  {%- else -%}
+                    {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </div>
+
+              </div>
+            </div>
+          {%- endfor -%}
+
+        </div>
+
+        <!-- Slider Controls -->
+        {%- if section.settings.show_pagination -%}
+          <div class="swiper-pagination category-pagination-{{ section.id }}"></div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_navigation -%}
+        <div class="swiper-button-next category-button-next-{{ section.id }}"></div>
+        <div class="swiper-button-prev category-button-prev-{{ section.id }}"></div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<!-- Swiper JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const categorySwiper = new Swiper('.category-main-swiper-{{ section.id }}', {
+      slidesPerView: {{ section.settings.slides_per_view_mobile }},
+      spaceBetween: 16,
+      loop: {{ section.settings.slider_loop }},
+      autoplay: {% if section.settings.slider_autoplay %}{ delay: 4000, disableOnInteraction: false }{% else %}false{% endif %},
+      {% if section.settings.show_pagination %}
+      pagination: {
+        el: '.category-pagination-{{ section.id }}',
+        clickable: true,
+      },
+      {% endif %}
+      {% if section.settings.show_navigation %}
+      navigation: {
+        nextEl: '.category-button-next-{{ section.id }}',
+        prevEl: '.category-button-prev-{{ section.id }}',
+      },
+      {% endif %}
+      breakpoints: {
+        750: {
+          slidesPerView: {{ section.settings.slides_per_view_tablet }},
+          spaceBetween: 20,
+        },
+        1024: {
+          slidesPerView: {{ section.settings.slides_per_view_desktop }},
+          spaceBetween: 24,
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .custom-category-slider-section {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: {{ section.settings.section_bg }};
+  }
+  .custom-category-slider-section .page-width {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  .category-section-header {
+    margin-bottom: 25px;
+  }
+  .category-section-header h2 {
+    font-size: 28px;
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .category-swiper-outer {
+    position: relative;
+  }
+
+  .category-card {
+    border-radius: 24px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: {{ section.settings.card_height }}px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .category-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    z-index: 2;
+  }
+  .category-title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .category-arrow-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  .category-arrow-btn:hover {
+    transform: scale(1.1);
+    background: {{ section.settings.arrow_hover_bg }};
+    color: {{ section.settings.arrow_hover_icon }};
+  }
+
+  .category-card-image {
+    width: 100%;
+    height: calc(100% - 50px);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .category-card-image img,
+  .category-card-image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  /* Scoped Swiper Pagination Dots */
+  .category-main-swiper-{{ section.id }} .swiper-pagination-bullet {
+    background: {{ section.settings.dot_color }};
+    opacity: 0.4;
+  }
+  .category-main-swiper-{{ section.id }} .swiper-pagination-bullet-active {
+    background: {{ section.settings.dot_active_color }};
+    opacity: 1;
+  }
+
+  /* Scoped Navigation Arrows */
+  .custom-category-slider-section .swiper-button-next,
+  .custom-category-slider-section .swiper-button-prev {
+    color: {{ section.settings.arrow_icon_color }};
+    background: {{ section.settings.arrow_bg_color }};
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  }
+  .custom-category-slider-section .swiper-button-next:hover,
+  .custom-category-slider-section .swiper-button-prev:hover {
+    background: {{ section.settings.arrow_hover_bg }};
+    color: {{ section.settings.arrow_hover_icon }};
+  }
+  .custom-category-slider-section .swiper-button-next::after,
+  .custom-category-slider-section .swiper-button-prev::after {
+    font-size: 14px;
+    font-weight: bold;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Category Image Cards",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section Heading",
+      "default": "Explore Categories"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Max Container Width",
+      "default": 1300
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "min": 300,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Card Height",
+      "default": 420
+    },
+    {
+      "type": "header",
+      "content": "Slider Responsive Settings"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Cards Per View (Desktop)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Cards Per View (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Cards Per View (Mobile)",
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "slider_loop",
+      "label": "Enable Infinite Loop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "slider_autoplay",
+      "label": "Enable Autoplay",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Navigation Arrows Control"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow Icon Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_bg",
+      "label": "Arrow Hover Background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_icon",
+      "label": "Arrow Hover Icon Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Pagination Dots Control"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show Pagination Dots",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Inactive Dot Color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active Dot Color",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Card Button Styling"
+    },
+    {
+      "type": "color",
+      "id": "arrow_btn_bg",
+      "label": "Card Arrow Button Background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "arrow_btn_icon",
+      "label": "Card Arrow Icon Color",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category_item",
+      "name": "Category Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category_title",
+          "label": "Category Title",
+          "default": "{ body }"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color",
+          "default": "#111111"
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image",
+          "label": "Card Image"
+        },
+        {
+          "type": "color",
+          "id": "card_bg",
+          "label": "Card Background Color",
+          "default": "#f9f9f9"
+        },
+        {
+          "type": "range",
+          "id": "card_blur",
+          "min": 0,
+          "max": 30,
+          "step": 2,
+          "unit": "px",
+          "label": "Card Backdrop Blur Effect",
+          "default": 0
+        },
+        {
+          "type": "url",
+          "id": "card_link",
+          "label": "Card Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Image Cards",
+      "blocks": [
+        {
+          "type": "category_item",
+          "settings": { "category_title": "{ body }" }
+        },
+        {
+          "type": "category_item",
+          "settings": { "category_title": "{ face }" }
+        },
+        {
+          "type": "category_item",
+          "settings": { "category_title": "{ hair }" }
+        },
+        {
+          "type": "category_item",
+          "settings": { "category_title": "{ other }" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

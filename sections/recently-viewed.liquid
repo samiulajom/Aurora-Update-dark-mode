@@ -1,0 +1,314 @@
+{%- if section.settings.enable -%}
+<style>
+  .js-recently-view-button {
+    position: fixed;
+    z-index: 1;
+    background-size: contain;
+    background-position: center;
+    bottom: calc(3vh + 60px);
+    right: 4vh;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+    display: block;
+    border: 1px solid;
+    border-radius: 50%;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: all ease .3s;
+  }
+  .js-recently-view-button.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  @media (max-width:767px) {
+    .js-recently-view-button {
+      bottom: 3vh;
+      right: 3vh;
+    }
+  }
+  .js-recently-view-wrapper {
+    display: none;
+  }
+  .js-recently-view-wrapper.has-products {
+    display: block;
+  }
+</style>
+
+<a data-tooltip="true" title="{{ section.settings.title }}" href="javascript:void(0)" class="js-recently-view-button hide" data-toggle="modal" data-target="#jsRecentlyViewed" data-limit="{{ section.settings.limit }}">
+</a>
+
+{%- render 'style-section' -%}  
+
+<div id="jsRecentlyViewed" class="js-recently-view-wrapper customstyle{{ section.id }}" data-aos="{{ section.settings.animation }}">
+  <div class="{{ section.settings.setwidth }}">
+    {%- render 'section-heading-df' -%}
+    <div class="row js-recently-view-content text-center justify-content-center" data-limit="{{ section.settings.limit }}" data-current-id="{{ product.id }}">
+      <!-- Products will be appended here dynamically -->
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const currentId = "{{ product.id }}";
+    if (currentId) {
+      let items = JSON.parse(localStorage.getItem('theme_recently_viewed')) || [];
+      items = items.filter(id => id !== currentId);
+      items.unshift(currentId);
+      if (items.length > 12) items.pop();
+      localStorage.setItem('theme_recently_viewed', JSON.stringify(items));
+    }
+
+    class ThemeRecentlyViewedComponent {
+      constructor() {
+        this.container = document.querySelector('.js-recently-view-content');
+        if (!this.container) return;
+        
+        this.wrapper = this.container.closest('.js-recently-view-wrapper');
+        this.currentId = this.container.dataset.currentId;
+        this.limit = parseInt(this.container.dataset.limit) || 4;
+        
+        this.container.innerHTML = ''; 
+        this.init();
+        this.watchContainer(); // ডম গার্ডেনিং চালু করা হলো
+      }
+
+      // এই ফাংশনটি অন্য কোনো স্ক্রিপ্ট থেকে ডামি কার্ড পুশ করলেই তাকে সাথে সাথে ডিলেট করে দেবে
+      watchContainer() {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && (node.classList.contains('js-viewed-item') || node.querySelector('.js-viewed-item'))) {
+                  node.remove(); // থিমের ডামি কার্ড আসার সাথে সাথে রিমুভ হবে
+                }
+              });
+            }
+          });
+        });
+
+        observer.observe(this.container, { childList: true, subtree: true });
+      }
+
+      init() {
+        let storedIds = JSON.parse(localStorage.getItem('theme_recently_viewed')) || [];
+        storedIds = storedIds.filter(id => id !== this.currentId);
+        
+        if (storedIds.length === 0) return;
+        
+        const fetchSubset = storedIds.slice(0, this.limit);
+        const searchQuery = fetchSubset.map(id => `id:${id}`).join(' OR ');
+        const endpoint = `${window.Shopify.routes.root}search?type=product&q=${encodeURIComponent(searchQuery)}&view=recently-viewed-raw`;
+
+        fetch(endpoint)
+          .then(response => response.text())
+          .then(htmlContent => {
+            const domParser = new DOMParser();
+            const parsedDoc = domParser.parseFromString(htmlContent, 'text/html');
+            const elements = parsedDoc.querySelectorAll('[data-recently-viewed-item]');
+
+            if (elements.length > 0) {
+              const filteredElements = [];
+              const uniqueCheckSet = new Set();
+
+              elements.forEach(el => {
+                const pId = el.dataset.productId;
+                if (!uniqueCheckSet.has(pId) && pId !== this.currentId) {
+                  uniqueCheckSet.add(pId);
+                  filteredElements.push(el);
+                }
+              });
+
+              if (filteredElements.length === 0) return;
+
+              this.wrapper.classList.add('has-products');
+              
+              const structuredItems = filteredElements.sort((first, second) => {
+                return fetchSubset.indexOf(first.dataset.productId) - fetchSubset.indexOf(second.dataset.productId);
+              });
+
+              const finalItemsToRender = structuredItems.slice(0, this.limit);
+
+              // রেন্ডার করার ঠিক আগে কন্টেইনার ক্লিয়ার করা হচ্ছে
+              this.container.innerHTML = ''; 
+
+              finalItemsToRender.forEach(node => {
+                const innerCard = node.querySelector('.theme-card-wrapper') || node.querySelector('.product-card') || node;
+                
+                if (innerCard) {
+                  const columnWrapper = document.createElement('div');
+                  columnWrapper.className = 'col-6 col-md-4 col-lg-3 mb-4';
+                  columnWrapper.innerHTML = innerCard.outerHTML;
+                  this.container.appendChild(columnWrapper);
+                }
+              });
+
+              if (window.SPR && window.SPR.initDomEls) {
+                window.SPR.registerCallbacks();
+                window.SPR.initRatingHandler();
+                window.SPR.initDomEls();
+                window.SPR.loadProducts();
+                window.SPR.loadBadges();
+              }
+            }
+          })
+          .catch(exception => console.error('Error fetching dynamic items:', exception));
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new ThemeRecentlyViewedComponent();
+    });
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Recently Viewed",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "options": [
+        { "value": "", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "fade-up", "label": "Fade Up" },
+        { "value": "fade-down", "label": "Fade Down" },
+        { "value": "fade-left", "label": "Fade Left" },
+        { "value": "fade-right", "label": "Fade Right" },
+        { "value": "fade-up-right", "label": "Fade Up Right" },
+        { "value": "fade-up-left", "label": "Fade Up Left" },
+        { "value": "fade-down-right", "label": "Fade Down Right" },
+        { "value": "fade-down-left", "label": "Fade Down Left" },
+        { "value": "flip-up", "label": "Flip Up" },
+        { "value": "flip-down", "label": "Flip Down" },
+        { "value": "flip-left", "label": "Flip Left" },
+        { "value": "flip-right", "label": "Flip Right" },
+        { "value": "slide-up", "label": "Slide Up" },
+        { "value": "slide-down", "label": "Slide Down" },
+        { "value": "slide-left", "label": "Slide Left" },
+        { "value": "slide-right", "label": "Slide Right" },
+        { "value": "zoom-in", "label": "Zoom In" },
+        { "value": "zoom-in-up", "label": "Zoom In Up" },
+        { "value": "zoom-in-down", "label": "Zoom In Down" },
+        { "value": "zoom-in-left", "label": "Zoom In Left" },
+        { "value": "zoom-in-right", "label": "Zoom In Right" },
+        { "value": "zoom-out", "label": "Zoom Out" },
+        { "value": "zoom-out-up", "label": "Zoom Out Up" },
+        { "value": "zoom-out-down", "label": "Zoom Out Down" },
+        { "value": "zoom-out-left", "label": "Zoom Out Left" },
+        { "value": "zoom-out-right", "label": "Zoom Out Right" }
+      ],
+      "label": "Select Animation"
+    },
+    {
+      "type": "select",
+      "id": "setwidth",
+      "label": "Full Width",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Box" },
+        { "value": "container-fluid", "label": "Container Fluid" },
+        { "value": "full", "label": "Full" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "header",
+      "content": "Text Heading"
+    },
+    {
+      "type": "text",
+      "id": "title_top",
+      "label": "Sub Title Top",
+      "default": "Sub Title Top"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "textarea",
+      "id": "des",
+      "label": "HTML / Description"
+    },
+    {
+      "type": "select",
+      "id": "align-heading",
+      "label": "Align Heading",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Limit",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Section Padding "
+    },
+    {
+      "type": "text",
+      "id": "paddingsection",
+      "label": "Padding Section",
+      "default": "0px 0px 0px 0px",
+      "info": "Padding: Top Right Bottom Left"
+    },
+    {
+      "type": "text",
+      "id": "paddingmobile",
+      "label": "Padding Section Mobile",
+      "default": "40px 0px 40px 0px",
+      "info": "Padding: Top Right Bottom Left"
+    },
+    {
+      "type": "header",
+      "content": "Section Margin "
+    },
+    {
+      "type": "text",
+      "id": "marginsection",
+      "label": "Margin Section",
+      "default": "0px 0px 0px 0px",
+      "info": "Margin: Top Right Bottom Left"
+    },
+    {
+      "type": "text",
+      "id": "marginmobile",
+      "label": "Margin Mobile",
+      "default": "0px 0px 0px 0px",
+      "info": "Margin: Top Right Bottom Left"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recently Viewed"
+    }
+  ]
+}
+{% endschema %}

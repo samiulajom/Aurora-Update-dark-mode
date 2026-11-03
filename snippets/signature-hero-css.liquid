@@ -1,0 +1,152 @@
+{%- comment -%} CSS for sections/signature-hero-banner.liquid. Usage: {% render 'signature-hero-css', section: section %} {%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign sid = section.id
+
+  assign d_justify = 'flex-start'
+  if s.content_h_align == 'center'
+    assign d_justify = 'center'
+  elsif s.content_h_align == 'right'
+    assign d_justify = 'flex-end'
+  endif
+  assign d_valign = 'center'
+  if s.content_v_align == 'top'
+    assign d_valign = 'flex-start'
+  elsif s.content_v_align == 'bottom'
+    assign d_valign = 'flex-end'
+  endif
+  assign d_items = 'flex-start'
+  assign d_ul_ml = '0'
+  assign d_ul_mr = 'auto'
+  if s.text_align == 'center'
+    assign d_items = 'center'
+    assign d_ul_ml = 'auto'
+  elsif s.text_align == 'right'
+    assign d_items = 'flex-end'
+    assign d_ul_ml = 'auto'
+    assign d_ul_mr = '0'
+  endif
+
+  assign m_justify = 'flex-start'
+  if s.mobile_content_h_align == 'center'
+    assign m_justify = 'center'
+  elsif s.mobile_content_h_align == 'right'
+    assign m_justify = 'flex-end'
+  endif
+  assign m_valign = 'center'
+  if s.mobile_content_v_align == 'top'
+    assign m_valign = 'flex-start'
+  elsif s.mobile_content_v_align == 'bottom'
+    assign m_valign = 'flex-end'
+  endif
+  assign m_items = 'flex-start'
+  assign m_ul_ml = '0'
+  assign m_ul_mr = 'auto'
+  if s.mobile_text_align == 'center'
+    assign m_items = 'center'
+    assign m_ul_ml = 'auto'
+  elsif s.mobile_text_align == 'right'
+    assign m_items = 'flex-end'
+    assign m_ul_ml = 'auto'
+    assign m_ul_mr = '0'
+  endif
+-%}
+
+{%- capture overlay_d -%}
+  {%- assign a_d = s.overlay_opacity | divided_by: 100.0 -%}
+  {%- assign c1_d = s.overlay_color | color_modify: 'alpha', a_d -%}
+  {%- assign c0_d = s.overlay_color | color_modify: 'alpha', 0 -%}
+  {%- case s.overlay_type -%}
+    {%- when 'left' -%}linear-gradient(to right, {{ c1_d }} 0%, {{ c0_d }} {{ s.overlay_spread }}%)
+    {%- when 'right' -%}linear-gradient(to left, {{ c1_d }} 0%, {{ c0_d }} {{ s.overlay_spread }}%)
+    {%- when 'top' -%}linear-gradient(to bottom, {{ c1_d }} 0%, {{ c0_d }} {{ s.overlay_spread }}%)
+    {%- when 'bottom' -%}linear-gradient(to top, {{ c1_d }} 0%, {{ c0_d }} {{ s.overlay_spread }}%)
+    {%- when 'solid' -%}linear-gradient({{ c1_d }}, {{ c1_d }})
+    {%- else -%}none
+  {%- endcase -%}
+{%- endcapture -%}
+
+{%- capture overlay_m -%}
+  {%- assign a_m = s.mobile_overlay_opacity | divided_by: 100.0 -%}
+  {%- assign c1_m = s.overlay_color | color_modify: 'alpha', a_m -%}
+  {%- assign c0_m = s.overlay_color | color_modify: 'alpha', 0 -%}
+  {%- case s.mobile_overlay_type -%}
+    {%- when 'left' -%}linear-gradient(to right, {{ c1_m }} 0%, {{ c0_m }} {{ s.mobile_overlay_spread }}%)
+    {%- when 'right' -%}linear-gradient(to left, {{ c1_m }} 0%, {{ c0_m }} {{ s.mobile_overlay_spread }}%)
+    {%- when 'top' -%}linear-gradient(to bottom, {{ c1_m }} 0%, {{ c0_m }} {{ s.mobile_overlay_spread }}%)
+    {%- when 'bottom' -%}linear-gradient(to top, {{ c1_m }} 0%, {{ c0_m }} {{ s.mobile_overlay_spread }}%)
+    {%- when 'solid' -%}linear-gradient({{ c1_m }}, {{ c1_m }})
+    {%- else -%}none
+  {%- endcase -%}
+{%- endcapture -%}
+
+{% style %}
+{%- if s.use_custom_fonts -%}
+  {{ s.heading_font | font_face: font_display: 'swap' }}
+  {%- assign hf_bold = s.heading_font | font_modify: 'weight', 'bold' -%}
+  {{ hf_bold | font_face: font_display: 'swap' }}
+  {%- assign hf_italic = s.heading_font | font_modify: 'style', 'italic' -%}
+  {{ hf_italic | font_face: font_display: 'swap' }}
+  {{ s.body_font | font_face: font_display: 'swap' }}
+  {%- assign bf_bold = s.body_font | font_modify: 'weight', 'bold' -%}
+  {{ bf_bold | font_face: font_display: 'swap' }}
+{%- endif -%}
+#sig-hero-{{ sid }}{--sig-head-font:{% if s.use_custom_fonts %}{{ s.heading_font.family }},{{ s.heading_font.fallback_families }}{% else %}inherit{% endif %};--sig-body-font:{% if s.use_custom_fonts %}{{ s.body_font.family }},{{ s.body_font.fallback_families }}{% else %}inherit{% endif %};--sig-ul-ml:{{ m_ul_ml }};--sig-ul-mr:{{ m_ul_mr }};position:relative;overflow:hidden;isolation:isolate;box-sizing:border-box;background:{{ s.background_color }};margin-top:{{ s.margin_top_mobile }}px;margin-bottom:{{ s.margin_bottom_mobile }}px;border-radius:{{ s.border_radius }}px;font-family:var(--sig-body-font)}
+#sig-hero-{{ sid }} .sig-hero__media{position:absolute;inset:0}
+#sig-hero-{{ sid }} .sig-hero__media picture{display:block;width:100%;height:100%}
+#sig-hero-{{ sid }} .sig-hero__img{display:block;width:100%;height:100%;object-fit:cover;object-position:{{ s.image_position_mobile }}}
+#sig-hero-{{ sid }}.sig-hero--m-fixed{height:{{ s.mobile_height }}px}
+#sig-hero-{{ sid }}.sig-hero--m-auto .sig-hero__media{position:relative}
+#sig-hero-{{ sid }}.sig-hero--m-auto .sig-hero__media picture,#sig-hero-{{ sid }}.sig-hero--m-auto .sig-hero__img{height:auto}
+#sig-hero-{{ sid }} .sig-hero__overlay{position:absolute;inset:0;z-index:1;pointer-events:none;background:{{ overlay_m }}}
+#sig-hero-{{ sid }} .sig-hero__link{position:absolute;inset:0;z-index:2}
+#sig-hero-{{ sid }} .sig-hero__link:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+#sig-hero-{{ sid }} .sig-hero__inner{position:absolute;inset:0;z-index:3;display:flex;box-sizing:border-box;pointer-events:none;justify-content:{{ m_justify }};align-items:{{ m_valign }};padding:{{ s.mobile_padding_y }}px {{ s.mobile_padding_x }}px}
+#sig-hero-{{ sid }} .sig-hero__content{display:flex;flex-direction:column;box-sizing:border-box;width:100%;max-width:100%;align-items:{{ m_items }};text-align:{{ s.mobile_text_align }}}
+#sig-hero-{{ sid }} .sig-hero__content>*{max-width:100%}
+#sig-hero-{{ sid }} .sig-hero__content a{pointer-events:auto}
+{%- for block in section.blocks -%}
+{%- assign b = block.settings -%}
+{%- assign bc = '#sig-hero-' | append: sid | append: ' .sig-b-' | append: block.id -%}
+{%- case block.type -%}
+{%- when 'logo' %}
+{{ bc }}{width:{{ b.width_mobile }}px;margin-bottom:{{ b.space_after_mobile }}px}
+{{ bc }} img{display:block;width:100%;height:auto}
+@media (min-width:750px){ {{ bc }}{width:{{ b.width_desktop }}px;margin-bottom:{{ b.space_after_desktop }}px} }
+{%- when 'heading' %}
+{{ bc }}{margin:0 0 {{ b.space_after_mobile }}px;width:fit-content;font-family:var(--sig-head-font);font-style:{{ b.font_style }};font-weight:{{ b.font_weight }};font-size:{{ b.size_mobile }}px;line-height:{{ b.line_height }};letter-spacing:{{ b.letter_spacing }}px;color:{{ b.color }};{% if b.uppercase %}text-transform:uppercase;{% endif %}{% if b.text_shadow %}text-shadow:0 2px 14px rgba(0,0,0,.45);{% endif %}}
+{%- if b.underline %}
+{{ bc }}::after{content:'';display:block;width:{{ b.underline_width }}%;height:{{ b.underline_thickness }}px;margin-top:{{ b.underline_gap }}px;margin-left:var(--sig-ul-ml);margin-right:var(--sig-ul-mr);background:{{ b.underline_color }}}
+{%- endif %}
+@media (min-width:750px){ {{ bc }}{font-size:{{ b.size_desktop }}px;margin-bottom:{{ b.space_after_desktop }}px} }
+{%- when 'text' %}
+{{ bc }}{margin:0 0 {{ b.space_after_mobile }}px;max-width:100%;font-family:var(--sig-body-font);font-weight:{{ b.font_weight }};font-size:{{ b.size_mobile }}px;line-height:{{ b.line_height }};letter-spacing:{{ b.letter_spacing }}px;color:{{ b.color }};{% if b.text_shadow %}text-shadow:0 1px 10px rgba(0,0,0,.4);{% endif %}}
+{{ bc }} p{margin:0 0 .6em}
+{{ bc }} p:last-child{margin-bottom:0}
+{{ bc }} a{color:inherit}
+@media (min-width:750px){ {{ bc }}{font-size:{{ b.size_desktop }}px;max-width:{{ b.max_width }}px;margin-bottom:{{ b.space_after_desktop }}px} }
+{%- when 'button' %}
+{{ bc }}{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;margin:0 0 {{ b.space_after_mobile }}px;padding:{{ b.padding_y }}px {{ b.padding_x }}px;font-family:var(--sig-body-font);font-size:{{ b.size_mobile }}px;font-weight:{{ b.font_weight }};line-height:1.2;letter-spacing:{{ b.letter_spacing }}px;{% if b.uppercase %}text-transform:uppercase;{% endif %}text-decoration:none;color:{{ b.text_color }};background:{% if b.transparent_bg %}transparent{% else %}{{ b.bg_color }}{% endif %};border:{{ b.border_width }}px solid {{ b.border_color }};border-radius:{{ b.radius }}px;transition:background-color .2s ease,color .2s ease,border-color .2s ease}
+{{ bc }}:hover{color:{{ b.hover_text_color }};background:{{ b.hover_bg_color }};border-color:{{ b.hover_border_color }}}
+{{ bc }}:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media (min-width:750px){ {{ bc }}{font-size:{{ b.size_desktop }}px;margin-bottom:{{ b.space_after_desktop }}px} }
+{%- when 'spacer' %}
+{{ bc }}{height:{{ b.height_mobile }}px;flex-shrink:0}
+@media (min-width:750px){ {{ bc }}{height:{{ b.height_desktop }}px} }
+{%- endcase -%}
+{%- endfor %}
+@media (min-width:750px){
+#sig-hero-{{ sid }}{--sig-ul-ml:{{ d_ul_ml }};--sig-ul-mr:{{ d_ul_mr }};margin-top:{{ s.margin_top }}px;margin-bottom:{{ s.margin_bottom }}px}
+#sig-hero-{{ sid }} .sig-hero__img{object-position:{{ s.image_position_desktop }}}
+#sig-hero-{{ sid }}.sig-hero--d-fixed{height:{{ s.desktop_height }}px}
+#sig-hero-{{ sid }}.sig-hero--d-fixed .sig-hero__media{position:absolute}
+#sig-hero-{{ sid }}.sig-hero--d-fixed .sig-hero__media picture,#sig-hero-{{ sid }}.sig-hero--d-fixed .sig-hero__img{height:100%}
+#sig-hero-{{ sid }}.sig-hero--d-auto{height:auto}
+#sig-hero-{{ sid }}.sig-hero--d-auto .sig-hero__media{position:relative}
+#sig-hero-{{ sid }}.sig-hero--d-auto .sig-hero__media picture,#sig-hero-{{ sid }}.sig-hero--d-auto .sig-hero__img{height:auto}
+#sig-hero-{{ sid }} .sig-hero__overlay{background:{{ overlay_d }}}
+#sig-hero-{{ sid }} .sig-hero__inner{justify-content:{{ d_justify }};align-items:{{ d_valign }};padding:{{ s.content_padding_y }}px {{ s.content_padding_x }}px}
+#sig-hero-{{ sid }} .sig-hero__content{max-width:{{ s.content_max_width }}px;align-items:{{ d_items }};text-align:{{ s.text_align }}}
+}
+@media (prefers-reduced-motion:reduce){#sig-hero-{{ sid }} .sig-hero__btn{transition:none}}
+{% endstyle %}

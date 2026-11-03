@@ -1,0 +1,801 @@
+<!-- product-content.liquid -->
+{%- liquid
+    assign validRelated = 'col-12'
+    assign left_size = 'col-md-7 col-12'
+    assign right_size = 'col-md-5 col-12'
+
+    if section.settings.tab_size == 'normal'
+        assign left_size = 'col-md-6 col-12'
+        assign right_size = 'col-md-6 col-12'
+    endif
+
+    for block in section.blocks
+        if block.type == 'related-product'
+            assign validRelated = left_size
+        else
+            assign validRelated = 'col-md-10 col-12'
+        endif
+    endfor
+
+    case section.settings.alignment
+      when 'left'
+        assign row_align_class = 'justify-content-start'
+        assign nav_align_style = 'justify-content: flex-start;'
+      when 'center'
+        assign row_align_class = 'justify-content-center'
+        assign nav_align_style = 'justify-content: center;'
+      when 'right'
+        assign row_align_class = 'justify-content-end'
+        assign nav_align_style = 'justify-content: flex-end;'
+      else
+        assign row_align_class = 'justify-content-center'
+        assign nav_align_style = 'justify-content: flex-start;'
+    endcase
+-%}
+
+<style>
+  :root {
+    --accent-color: {{ section.settings.accent_color }};
+    --dark-surface: {{ section.settings.card_bg_color }};
+    --dark-body: {{ section.settings.bg_color }};
+    --border-dark: {{ section.settings.border_color }};
+    --text-dimmed: {{ section.settings.text_muted_color }};
+    --text-main: {{ section.settings.text_color }};
+    --neon-glow: 0 0 15px {{ section.settings.accent_color }}20;
+  }
+
+  .premium-product-tabs-{{ section.id }} {
+    background-color: var(--dark-body);
+    color: var(--text-main);
+    width: 100%;
+    overflow-x: hidden;
+    
+    /* Desktop Spacing */
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: {{ section.settings.padding_left }}px;
+    padding-right: {{ section.settings.padding_right }}px;
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+    margin-left: {{ section.settings.margin_left }}px;
+    margin-right: {{ section.settings.margin_right }}px;
+  }
+
+  .premium-product-tabs-{{ section.id }} .dynamic-container {
+    width: 100%;
+    {% if section.settings.full_width %}
+    max-width: 100% !important;
+    padding-left: 20px;
+    padding-right: 20px;
+    {% else %}
+    max-width: {{ section.settings.container_width }}px;
+    padding-left: 15px;
+    padding-right: 15px;
+    {% endif %}
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .premium-product-tabs-{{ section.id }} .dynamic-container .row {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tabs-nav {
+    border-bottom: 1px solid var(--border-dark) !important;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 12px;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    list-style: none;
+    {{ nav_align_style }}
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .premium-product-tabs-{{ section.id }} .premium-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tab-btn {
+    color: var(--text-dimmed) !important;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    text-decoration: none !important;
+    display: inline-block;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: {{ section.settings.button_border_radius }}px !important; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tab-btn:hover {
+    color: var(--text-main) !important;
+    border-color: var(--text-main) !important;
+    background: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tab-btn.active {
+    color: #ffffff !important;
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tab-content-box {
+    background: var(--dark-surface);
+    border: 1px solid var(--border-dark);
+    border-radius: {{ section.settings.box_border_radius }}px;
+    padding: 35px;
+    max-height: {{ section.settings.content_max_height }}px;
+    overflow-y: auto;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-tab-content-box::-webkit-scrollbar {
+    width: 8px;
+  }
+  .premium-product-tabs-{{ section.id }} .premium-tab-content-box::-webkit-scrollbar-track {
+    background: var(--dark-surface) !important;
+    border-radius: 20px !important;
+    margin: 15px 0;
+  }
+  .premium-product-tabs-{{ section.id }} .premium-tab-content-box::-webkit-scrollbar-thumb {
+    background: var(--border-dark) !important;
+    border-radius: 20px !important;
+    border: 2px solid var(--dark-surface);
+    transition: background 0.3s ease;
+  }
+  .premium-product-tabs-{{ section.id }} .premium-tab-content-box::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color) !important;
+  }
+
+  .premium-product-tabs-{{ section.id }} .tab-content > .tab-pane {
+    display: none;
+  }
+  .premium-product-tabs-{{ section.id }} .tab-content > .active {
+    display: block !important;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-pane-content {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-main);
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-pane-content p,
+  .premium-product-tabs-{{ section.id }} .premium-pane-content span,
+  .premium-product-tabs-{{ section.id }} .premium-pane-content div,
+  .premium-product-tabs-{{ section.id }} .premium-pane-content li {
+    color: var(--text-main) !important;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-pane-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-sidebar-card {
+    background: var(--dark-surface);
+    border: 1px solid var(--border-dark);
+    border-radius: {{ section.settings.box_border_radius }}px;
+    padding: 25px;
+    transition: border-color 0.3s ease;
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-sidebar-card:hover {
+    border-color: var(--accent-color);
+  }
+
+  .premium-product-tabs-{{ section.id }} .premium-sidebar-title {
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 12px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 767px) {
+    .premium-product-tabs-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px !important;
+      padding-left: {{ section.settings.padding_left_mobile }}px !important;
+      padding-right: {{ section.settings.padding_right_mobile }}px !important;
+      margin-top: {{ section.settings.margin_top_mobile }}px !important;
+      margin-bottom: {{ section.settings.margin_bottom_mobile }}px !important;
+      margin-left: {{ section.settings.margin_left_mobile }}px !important;
+      margin-right: {{ section.settings.margin_right_mobile }}px !important;
+    }
+    .premium-product-tabs-{{ section.id }} .dynamic-container {
+   padding-left: {{ section.settings.padding_left_mobile }}px !important;
+   padding-right: {{ section.settings.padding_right_mobile }}px !important;
+      max-width: 100% !important;
+    }
+    .premium-product-tabs-{{ section.id }} .premium-tab-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    .premium-product-tabs-{{ section.id }} .premium-tab-content-box {
+      padding: 20px;
+      max-height: 350px;
+    }
+    .premium-product-tabs-{{ section.id }} .product-related-sidebar {
+      margin-top: 35px;
+    }
+  }
+</style>
+
+<div class="premium-product-tabs-{{ section.id }} section-{{ section.id }}" data-aos="{{ section.settings.animation }}">
+  <div class="dynamic-container">
+    <div class="row {{ row_align_class }}">
+      
+      <div class="{{ validRelated }}">
+        <div class="premium-tabs-nav" role="tablist">
+          {%- assign first_tab_done = false -%}
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign active_class = ''
+              if first_tab_done == false and block.type != 'related-product'
+                assign active_class = 'active'
+                assign first_tab_done = true
+              endif
+            -%}
+            {%- case block.type -%}
+              {%- when 'description' -%}
+                <button class="premium-tab-btn {{ active_class }}" data-target="#tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.title_tab | default: 'Description' }}
+                </button>
+              {%- when 'custom_liquid' -%}
+                <button class="premium-tab-btn {{ active_class }}" data-target="#tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.title_tab | default: 'Specifications' }}
+                </button>
+              {%- when 'content' -%}
+                <button class="premium-tab-btn {{ active_class }}" data-target="#tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.title_tab | default: 'Information' }}
+                </button>
+              {%- when 'review' -%}
+                <button class="premium-tab-btn {{ active_class }}" data-target="#tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.title_tab | default: 'Reviews' }}
+                </button>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+
+        <div class="tab-content premium-tab-content-box">
+          {%- assign first_content_done = false -%}
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign pane_class = ''
+              if first_content_done == false and block.type != 'related-product'
+                assign pane_class = 'active'
+                assign first_content_done = true
+              endif
+            -%}
+            {%- case block.type -%}
+              {%- when 'description' -%}
+                <div class="tab-pane {{ pane_class }} premium-pane-content" id="tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ product.description }}
+                </div>
+              {%- when 'custom_liquid' -%}
+                <div class="tab-pane {{ pane_class }} premium-pane-content" id="tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.custom_liquid }}
+                </div>
+              {%- when 'content' -%}
+                <div class="tab-pane {{ pane_class }} premium-pane-content" id="tab-pane-{{ block.id }}-{{ section.id }}">
+                  {{ block.settings.answer_content }}
+                  {{ block.settings.page.content }}
+                </div>
+              {%- when 'review' -%}
+                <div class="tab-pane {{ pane_class }} premium-pane-content" id="tab-pane-{{ block.id }}-{{ section.id }}">
+                  {%- if block.settings.review_type == 'judgeme' -%}
+                    {%- render 'judgeme_widgets', widget_type: 'judgeme_review_widget', product: product -%}
+                  {%- elsif block.settings.review_type == 'loox' -%}
+                    <div id="looxReviews" data-product-id="{{ product.id }}">{{ product.metafields.loox.reviews }}</div>
+                  {%- elsif block.settings.review_type == 'Ali' -%}
+                    <div id="shopify-ali-review" product-id="{{ product.id }}"></div>
+                  {%- else -%}
+                    {{ block.settings.custom_review_code }}
+                  {%- endif -%}
+                </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'related-product' -%}
+          <div class="{{ right_size }} product-related-sidebar">
+            <div class="premium-sidebar-card">
+              {%- if block.settings.title_heading != blank -%}
+                <h5 class="premium-sidebar-title">{{ block.settings.title_heading }}</h5>
+              {%- endif -%}
+              <div class="row">
+                {%- for product in block.settings.product_list limit: 3 -%}
+                  <div class="col-lg col-6">
+                    {%- render 'product-grid-buywith', product: product -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const container = document.querySelector('.premium-product-tabs-{{ section.id }}');
+    if (!container) return;
+
+    const buttons = container.querySelectorAll('.premium-tab-btn');
+    const panes = container.querySelectorAll('.tab-pane');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        buttons.forEach(btn => btn.classList.remove('active'));
+        panes.forEach(pane => pane.classList.remove('active'));
+
+        this.classList.add('active');
+        
+        const targetSelector = this.getAttribute('data-target');
+        const targetPane = container.querySelector(targetSelector);
+        if (targetPane) {
+          targetPane.classList.add('active');
+          const contentBox = container.querySelector('.premium-tab-content-box');
+          if (contentBox) contentBox.scrollTop = 0;
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Premium Content",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card/Box Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Button Active",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Main Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_muted_color",
+      "label": "Muted Button Text",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Container Width & Alignment"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Enable Full Width (100% viewport width)",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Max Container Width (when full width is OFF)",
+      "default": 1200
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Content Alignment (Left / Center / Right)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "select",
+      "id": "tab_size",
+      "options": [
+        { "value": "normal", "label": "Normal (50/50)" },
+        { "value": "large", "label": "Large (70/30)" }
+      ],
+      "default": "large",
+      "label": "Tab Grid Size"
+    },
+    {
+      "type": "range",
+      "id": "content_max_height",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Content Box Max Height",
+      "default": 450,
+      "info": "Prevents long descriptions from stretching your layout. Rest is scrollable inside."
+    },
+    {
+      "type": "header",
+      "content": "Border Radius Settings"
+    },
+    {
+      "type": "range",
+      "id": "box_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Content Box & Card Border Radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Tab Buttons Border Radius",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "options": [
+        { "value": "", "label": "None" },
+        { "value": "fade-up", "label": "Fade Up" },
+        { "value": "fade-down", "label": "Fade Down" }
+      ],
+      "default": "fade-up",
+      "label": "Select Animation"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Spacing (Padding)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Left",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Right",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Desktop Spacing (Margin)"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_left",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Left",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_right",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Right",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile Spacing (Padding)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top (Mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom (Mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Left (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Right (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile Spacing (Margin)"
+    },
+    {
+      "type": "range",
+      "id": "margin_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Top (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Bottom (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_left_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Left (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_right_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin Right (Mobile)",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_tab",
+          "label": "Heading",
+          "default": "Description"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_tab",
+          "label": "Heading",
+          "default": "Specifications"
+        },
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "Content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_tab",
+          "label": "Heading",
+          "default": "Information"
+        },
+        {
+          "type": "richtext",
+          "id": "answer_content",
+          "label": "Tab Content",
+          "default": "<p>Add helpful text content for your buyers.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Select Page"
+        }
+      ]
+    },
+    {
+      "type": "related-product",
+      "name": "Featured Products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_heading",
+          "label": "Heading",
+          "default": "Related Products"
+        },
+        {
+          "type": "product_list",
+          "id": "product_list",
+          "label": "Products",
+          "limit": 3
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_heading",
+          "label": "Heading",
+          "default": "Reviews"
+        },
+        {
+          "type": "select",
+          "id": "review_type",
+          "label": "Review App / Type",
+          "options": [
+            { "value": "judgeme", "label": "Judge.me" },
+            { "value": "loox", "label": "Loox Reviews" },
+            { "value": "Ali", "label": "Ali Reviews" },
+            { "value": "custom", "label": "Custom Code / Other App" }
+          ],
+          "default": "judgeme"
+        },
+        {
+          "type": "liquid",
+          "id": "custom_review_code",
+          "label": "Custom Review Liquid Code",
+          "info": "Use this if you selected 'Custom Code / Other App' above and paste your app's widget code here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Premium Content",
+      "blocks": [
+        {
+          "type": "description"
+        },
+        {
+          "type": "content"
+        },
+        {
+          "type": "review"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
